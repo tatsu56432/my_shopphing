@@ -49,33 +49,47 @@ function get_db_connect()
 
 function register_user($pdo,$data){
 
-    $id = NULL;
-    $login_name = $data['login_name'];
-    $password = $data['password'];
-    $statement = $pdo->query("SET NAMES utf8;");
-    $statement = $pdo->prepare('SELECT user_name FROM user WHERE user_name = ?');
-    $statement->execute(array($login_name));
-    $result = $statement->fetch(PDO::FETCH_ASSOC);
-//    var_dump($login_name);
-    if($result !== false){
-        $result_comment =  "ユーザー名が既にに使用されています。";
-        return $result_comment;
-    }else{
-        if (is_array($data)) {
-            $statement = $pdo->query("SET NAMES utf8;");
-            $statement = $pdo->prepare("INSERT INTO user (id , user_name , password) VALUES (:id , :user_name , :password)");
-            $statement->bindValue(':id', $id, PDO::PARAM_INT);
-            $statement->bindParam(':user_name', $login_name, PDO::PARAM_STR);
-            $statement->bindParam(':password', $password, PDO::PARAM_STR);
-            $statement->execute();
-            $result_comment =  "登録しました。";
-            return $result_comment;
-        } else {
-            $result_comment =  'データの挿入に失敗しました。';
-            return $result_comment;
 
+    $pdo->beginTransaction();
+
+    try{
+        $id = NULL;
+        $login_name = $data['login_name'];
+        $password = $data['password'];
+        $statement = $pdo->query("SET NAMES utf8;");
+        $statement = $pdo->prepare('SELECT user_name FROM user WHERE user_name = ?');
+        $statement->execute(array($login_name));
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+//    var_dump($login_name);
+        if($result !== false){
+            $result_comment =  "ユーザー名が既にに使用されています。";
+            return $result_comment;
+        }else{
+            if (is_array($data)) {
+                $statement = $pdo->query("SET NAMES utf8;");
+                $statement = $pdo->prepare("INSERT INTO user (id , user_name , password) VALUES (:id , :user_name , :password)");
+                $statement->bindValue(':id', $id, PDO::PARAM_INT);
+                $statement->bindParam(':user_name', $login_name, PDO::PARAM_STR);
+                $statement->bindParam(':password', $password, PDO::PARAM_STR);
+                $statement->execute();
+                $pdo->commit();
+
+                $result_comment =  "登録しました。";
+                return $result_comment;
+            } else {
+                $result_comment =  'データの挿入に失敗しました。';
+                return $result_comment;
+
+            }
         }
+    }catch (PDOException $e){
+        $pdo->rollback();
+        throw $e;
     }
+
+
+
+
 }
 
 function validate_register($input = null){
