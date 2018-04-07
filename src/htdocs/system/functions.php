@@ -99,10 +99,12 @@ function check_login_user($pdo,$data){
             $login_name = $data['login_name'];
             $password = $data['password'];
             $statement = $pdo->query("SET NAMES utf8;");
-            $statement = $pdo->prepare('SELECT user_name,password FROM user WHERE user_name = :login_name AND password = :password');
-            $statement->execute(array($login_name,$password));
-            $result = $statement->fetch(PDO::FETCH_ASSOC);
-            if($result['user_name'] === $login_name && $result['password'] === $password){
+            $statement = $pdo->prepare('SELECT password FROM user WHERE user_name = :login_name');
+            $statement->execute(array($login_name));
+            $result = $statement->fetch(PDO::FETCH_COLUMN);
+//            $password_flag = password_verify($password ,$result);
+//            var_dump($password,$result,$password_flag);
+            if(password_verify($password ,$result)){
                 return true;
             }else{
                 return false;
