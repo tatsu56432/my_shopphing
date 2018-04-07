@@ -36,7 +36,7 @@
      (
      id INT(11) unsigned NOT NULL AUTO_INCREMENT,
      user_name varchar(50) NOT NULL,
-     password varchar(50) NOT NULL,
+     password varchar(500) NOT NULL,
      created_at datetime NOT NULL,
      updated_at datetime NOT NULL,
      primary key(id)
