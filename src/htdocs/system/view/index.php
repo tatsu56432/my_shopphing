@@ -13,20 +13,19 @@
     <div class="header__inner">
         <p class="header--ttl">my shopping site</p>
 
-
         <div class="userBlock">
-            <p class="userName">中島たつお</p>
+            <p class="userName"><?php if(isset($_SESSION['login_name'])) echo $_SESSION['login_name'] ?></p>
             <p class="icon--curt"><a href=""></a></p>
-            <p class="logout">ログアウト</p>
+            <p class="logout"></p>
         </div>
     </div>
 
 </header>
 <div class="container">
     <div class="container__inner">
+
+        <p class="">商品一覧</p>
         <div class="l-container--product">
-
-
             <ul class="productsItems">
                 <li class="productsItem">
                     <div class="productsItem__inner">

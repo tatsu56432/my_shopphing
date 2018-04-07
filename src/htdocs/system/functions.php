@@ -56,11 +56,11 @@ function register_user($pdo,$data){
         $id = NULL;
         $login_name = $data['login_name'];
         $password = $data['password'];
+        $salt_password = password_hash($password,PASSWORD_DEFAULT);
         $statement = $pdo->query("SET NAMES utf8;");
         $statement = $pdo->prepare('SELECT user_name FROM user WHERE user_name = ?');
         $statement->execute(array($login_name));
         $result = $statement->fetch(PDO::FETCH_ASSOC);
-//    var_dump($login_name);
         if($result !== false){
             $result_comment =  "ユーザー名が既にに使用されています。";
             return $result_comment;
@@ -70,7 +70,7 @@ function register_user($pdo,$data){
                 $statement = $pdo->prepare("INSERT INTO user (id , user_name , password) VALUES (:id , :user_name , :password)");
                 $statement->bindValue(':id', $id, PDO::PARAM_INT);
                 $statement->bindParam(':user_name', $login_name, PDO::PARAM_STR);
-                $statement->bindParam(':password', $password, PDO::PARAM_STR);
+                $statement->bindParam(':password', $salt_password, PDO::PARAM_STR);
                 $statement->execute();
                 $pdo->commit();
 
@@ -87,12 +87,36 @@ function register_user($pdo,$data){
         throw $e;
     }
 
+}
 
+
+function check_login_user($pdo,$data){
+
+    $pdo->beginTransaction();
+
+    try{
+        $login_name = $data['login_name'];
+        $password = $data['password'];
+        $statement = $pdo->query("SET NAMES utf8;");
+        $statement = $pdo->prepare('SELECT user_name,password FROM user WHERE user_name = :login_name AND password = :password');
+        $statement->execute(array($login_name,$password));
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        if($result['user_name'] === $login_name && $result['password'] === $password){
+            return true;
+        }else{
+            return false;
+        }
+
+    }catch (PDOException $e){
+        $pdo -> roolback();
+        throw $e;
+    }
 
 
 }
 
-function validate_register($input = null){
+
+function validate_ID_PASS($input = null){
 
     if(!$input){
         $input = $_POST;

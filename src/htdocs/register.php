@@ -21,7 +21,7 @@ if ($submit_register) {
         'password' => $password
     );
 
-    $error = validate_register($post_data);
+    $error = validate_ID_PASS($post_data);
 //    var_dump($error);
 
     if (count($error) <= 0) {
@@ -29,7 +29,6 @@ if ($submit_register) {
         $data['result_comment'] = $result_comment;
     } else {
         $data['error'] = $error;
-
     }
 }
 

@@ -11,30 +11,30 @@
 
 <header class="header">
     <div class="header__inner">
-        my shopping site
+        my shopping site login
     </div>
 </header>
 
-
-<?php echo $view ?>
 <div class="container">
     <div class="container__inner">
-
+<?php if(isset($unmatch)) echo $unmatch; ?>
         <div class="l-container--login">
             <div class="loginForm">
                 <form action="" method="post">
                     <div>
                         <label for="login_name">名前</label>
                         <input type="text" name="login_name" id="login_name">
+                        <?php if (isset($error['login_name'])) echo $error['login_name'];?>
                     </div>
                     <div>
                         <label for="password">パスワード</label>
                         <input type="password" name="password" id="password">
+                        <?php if (isset($error['password'])) echo $error['password'];?>
                     </div>
 
                     <div>
-                        <label for="">ログイン</label>
-                        <input type="submit" class="">
+                        <label for="submit_login">ログイン</label>
+                        <input type="submit" class="" name="submit_login" id="submit_login">
                     </div>
                     <input type="hidden" name="ticket">
                 </form>
