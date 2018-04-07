@@ -22,9 +22,81 @@ function view($template, $data)
     return $view;
 }
 
+function check_user_data($pdo,$data){
+
+
+
+}
+
+
+function get_db_connect()
+{
+    $dsn = 'mysql:dbname=' . DB_NAME . ';host=' . HOST . '';
+    $user = DB_USER_NAME;
+    $password = DB_PASS;
+//    $pdo = "";
+    try {
+        $pdo = new PDO($dsn, $user, $password);
+        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        // エラー発生時に例外を投げる
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    } catch (PDOException $e) {
+        echo 'Connection failed: ' . $e->getMessage();
+    }
+    return $pdo;
+}
+
+
 function register_user($pdo,$data){
 
+    $id = NULL;
+    $login_name = $data['login_name'];
+    $password = $data['password'];
+    $statement = $pdo->query("SET NAMES utf8;");
+    $statement = $pdo->prepare('SELECT user_name FROM user WHERE user_name = ?');
+    $statement->execute(array($login_name));
+    $result = $statement->fetch(PDO::FETCH_ASSOC);
+//    var_dump($login_name);
+    if($result !== false){
+        $result_comment =  "ユーザー名が既にに使用されています。";
+        return $result_comment;
+    }else{
+        if (is_array($data)) {
+            $statement = $pdo->query("SET NAMES utf8;");
+            $statement = $pdo->prepare("INSERT INTO user (id , user_name , password) VALUES (:id , :user_name , :password)");
+            $statement->bindValue(':id', $id, PDO::PARAM_INT);
+            $statement->bindParam(':user_name', $login_name, PDO::PARAM_STR);
+            $statement->bindParam(':password', $password, PDO::PARAM_STR);
+            $statement->execute();
+            $result_comment =  "登録しました。";
+            return $result_comment;
+        } else {
+            $result_comment =  'データの挿入に失敗しました。';
+            return $result_comment;
 
+        }
+    }
+}
+
+function validate_register($input = null){
+
+    if(!$input){
+        $input = $_POST;
+    }
+
+    $login_user = isset($input['login_name']) ? $input['login_name'] : NULL;
+    $password = isset($input['password']) ? $input['password'] : NULL;
+
+    $error = array();
+
+    if(empty($login_user)){
+        $error['login_name'] = "ユーザー名を入力してください。";
+    }
+
+    if(empty($password)){
+        $error['password'] = "パスワードを入力してください。";
+    }
+    return $error;
 
 }
 
@@ -43,20 +115,7 @@ function check_csrf()
     }
 }
 
-function get_db_connect()
-{
-    $dsn = 'mysql:dbname=' . DB_NAME . ';host=' . HOST . '';
-    $user = DB_USER_NAME;
-    $password = DB_PASS;
-//    $pdo = "";
-    try {
-        $pdo = new PDO($dsn, $user, $password);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        echo 'Connection failed: ' . $e->getMessage();
-    }
-    return $pdo;
-}
+
 
 
 //画像リネーム処理

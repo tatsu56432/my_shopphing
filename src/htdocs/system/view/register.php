@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>loginページ</title>
+    <title>registerページ</title>
 </head>
 <body>
 
@@ -15,8 +15,8 @@
     </div>
 </header>
 
+<?php if(isset($result_comment)) echo $result_comment; ?>
 
-<?php echo $view ?>
 <div class="container">
     <div class="container__inner">
 
@@ -26,17 +26,18 @@
                     <div>
                         <label for="login_name">名前</label>
                         <input type="text" name="login_name" id="login_name">
+                        <?php if (isset($error['login_name'])) echo $error['login_name'];?>
                     </div>
                     <div>
                         <label for="password">パスワード</label>
                         <input type="password" name="password" id="password">
+                        <?php if (isset($error['password'])) echo $error['password'];?>
                     </div>
 
                     <div>
-                        <label for="">ログイン</label>
-                        <input type="submit" class="">
+                        <label for="">登録する</label>
+                        <input type="submit" class="" name="submit_register">
                     </div>
-                    <input type="hidden" name="ticket">
                 </form>
 
             </div>
