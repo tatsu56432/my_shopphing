@@ -95,18 +95,21 @@ function check_login_user($pdo,$data){
     $pdo->beginTransaction();
 
     try{
-        $login_name = $data['login_name'];
-        $password = $data['password'];
-        $statement = $pdo->query("SET NAMES utf8;");
-        $statement = $pdo->prepare('SELECT user_name,password FROM user WHERE user_name = :login_name AND password = :password');
-        $statement->execute(array($login_name,$password));
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
-        if($result['user_name'] === $login_name && $result['password'] === $password){
-            return true;
+        if(is_array($data)){
+            $login_name = $data['login_name'];
+            $password = $data['password'];
+            $statement = $pdo->query("SET NAMES utf8;");
+            $statement = $pdo->prepare('SELECT user_name,password FROM user WHERE user_name = :login_name AND password = :password');
+            $statement->execute(array($login_name,$password));
+            $result = $statement->fetch(PDO::FETCH_ASSOC);
+            if($result['user_name'] === $login_name && $result['password'] === $password){
+                return true;
+            }else{
+                return false;
+            }
         }else{
-            return false;
+            echo "データの受け渡しに失敗しました。";
         }
-
     }catch (PDOException $e){
         $pdo -> roolback();
         throw $e;

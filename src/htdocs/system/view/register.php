@@ -11,7 +11,7 @@
 
 <header class="header">
     <div class="header__inner">
-        my shopping site 登録
+        my shopping site register
     </div>
 </header>
 
@@ -19,8 +19,7 @@
 
 <div class="container">
     <div class="container__inner">
-
-        <div class="l-container--login">
+        <div class="l-container--register">
             <div class="loginForm">
                 <form action="" method="post">
                     <div>
@@ -35,8 +34,8 @@
                     </div>
 
                     <div>
-                        <label for="">登録する</label>
-                        <input type="submit" class="" name="submit_register">
+                        <label for="submit_register">登録する</label>
+                        <input type="submit" class="" name="submit_register" id="submit_register">
                     </div>
                 </form>
 
