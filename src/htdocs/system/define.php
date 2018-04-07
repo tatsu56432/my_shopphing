@@ -7,5 +7,6 @@ define("DB_USER_NAME","root");
 define("DB_PASS","password");
 
 //ulr_template
-define("TOPPAGE" , "index.php");
-define("ADMINPAGE" , "/admin/index.php");
+define("TOP_PAGE" , "index.php");
+define("LOGIN_PAGE" , "login.php");
+define("ADMIN_PAGE" , "/admin/index.php");

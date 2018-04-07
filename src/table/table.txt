@@ -1,0 +1,43 @@
+     CREATE TABLE item
+     (
+     id INT(11) unsigned NOT NULL AUTO_INCREMENT,
+     name VARCHAR(50) NOT NULL,
+     price int(50) NOT NULL,
+     img VARCHAR(500) NOT NULL,
+     status int(1) NOT NULL,
+     created_at datetime NOT NULL,
+     updated_at datetime NOT NULL,
+     primary key(id)
+     )engine=InnoDB default charset=UTF8 AUTO_INCREMENT=1;
+
+     CREATE TABLE stock
+     (
+     id INT(11) unsigned NOT NULL AUTO_INCREMENT,
+     item_id INT(11) NOT NULL,
+     stock int(11) unsigned NOT NULL,
+     created_at datetime NOT NULL,
+     updated_at datetime NOT NULL,
+     primary key(id)
+     )engine=InnoDB default charset=UTF8 AUTO_INCREMENT=1;
+
+
+     CREATE TABLE cart
+     (
+     id INT(11) unsigned NOT NULL AUTO_INCREMENT,
+     user_id INT(11) NOT NULL,
+     item_id INT(11) NOT NULL,
+     amount INT(11) unsigned NOT NULL,
+     created_at datetime NOT NULL,
+     updated_at datetime NOT NULL,
+     primary key(id)
+     )engine=InnoDB default charset=UTF8 AUTO_INCREMENT=1;
+
+     CREATE TABLE user
+     (
+     id INT(11) unsigned NOT NULL AUTO_INCREMENT,
+     user_name varchar(50) NOT NULL,
+     password varchar(50) NOT NULL,
+     created_at datetime NOT NULL,
+     updated_at datetime NOT NULL,
+     primary key(id)
+     )engine=InnoDB default charset=UTF8 AUTO_INCREMENT=1;

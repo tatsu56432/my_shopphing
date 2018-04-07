@@ -3,6 +3,31 @@
 require_once 'define.php';
 
 
+function check_login () {
+    if(!isset($_SESSION['login_name'])){
+        header('location:' . LOGIN_PAGE);
+        exit;
+    }
+    return true;
+}
+
+function view($template, $data)
+{
+    escape($data);
+    extract($data);
+    ob_start();
+    include dirname(__FILE__) . '/view/' . $template;
+    $view = ob_get_contents();
+    ob_end_clean();
+    return $view;
+}
+
+function register_user($pdo,$data){
+
+
+
+}
+
 function check_csrf()
 {
     //csrf対策
