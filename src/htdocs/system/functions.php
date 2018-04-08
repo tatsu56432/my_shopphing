@@ -77,6 +77,7 @@ function register_user($pdo,$data){
                 $statement->bindValue(':updated_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
                 $statement->execute();
 
+                $pdo->commit();
 
                 $result_comment =  "登録しました。";
                 return $result_comment;
@@ -91,7 +92,7 @@ function register_user($pdo,$data){
         throw $e;
     }
 
-    $pdo->commit();
+
 
 }
 
@@ -233,6 +234,9 @@ function get_db_data($pdo)
 function insert_product_data($pdo, $product_data, $stock)
 {
 
+//    $pdo->beginTransaction();
+
+    try{
         if (is_array($product_data)) {
             $id = NULL;
             $item_id = mt_rand(1, 6);
@@ -242,7 +246,7 @@ function insert_product_data($pdo, $product_data, $stock)
             $status = $product_data['status'];
             $num_of_stock = $stock;
             $statement = $pdo->query("SET NAMES utf8;");
-            $statement = $pdo->prepare("INSERT INTO item (id , name, price , img , status , created_at , updated_at) VALUES (:id , :name , :price , :img , :status , :created_at , :updated_at )");
+            $statement = $pdo->prepare("INSERT INTO item (id , name , price , img , status , created_at , updated_at) VALUES (:id , :name , :price , :img , :status , :created_at , :updated_at )");
             $statement->bindValue(':id', $id, PDO::PARAM_INT);
             $statement->bindParam(':name', $name, PDO::PARAM_STR);
             $statement->bindParam(':price', $price, PDO::PARAM_STR);
@@ -260,13 +264,18 @@ function insert_product_data($pdo, $product_data, $stock)
             $statement->bindValue(':created_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
             $statement->bindValue(':updated_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
             $statement->execute();
+
+            $pdo->commit();
+
         } else {
             $error = 'データの受け渡しに失敗しました。';
             echo $error;
         }
 
-
-
+    }catch (PDOException $e){
+        $pdo -> rollback();
+        throw  $e;
+    }
 
 }
 

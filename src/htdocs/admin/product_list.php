@@ -41,7 +41,7 @@ if ($submit) {
     $post_product_data['image'] = $img_object['mime'];
     $post_product_data['status'] = $status;
 
-    var_dump($post_product_data);
+//    var_dump($post_product_data);
 
     $error = validate_admin_post_product($post_product_data);
 
@@ -67,6 +67,8 @@ if ($submit) {
             $data['status'] = 0;
         }
         $num_of_stock = $stock;
+
+        var_dump($data);
         insert_product_data($pdo, $data, $num_of_stock);
         header("Location:" . ADMIN_PRODUCT_PAGE);
 
