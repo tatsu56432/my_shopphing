@@ -47,7 +47,7 @@ body {
   line-height: 1;
   //background-color: #111;
   font-family: Lato, "Noto Sans JP", "游ゴシック Medium", "游ゴシック体", "Yu Gothic Medium", YuGothic, "ヒラギノ角ゴ ProN", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
-  &.index {
+  &.index, &.cart {
     background-color: #111;
   }
 }
@@ -191,7 +191,7 @@ h1 {
               text-align: center;
             }
             .product--status {
-              margin-top:25px;
+              margin-top: 25px;
               margin-bottom: 13px;
               text-align: center;
               &.is-soldout {
@@ -219,6 +219,152 @@ h1 {
       }
     }
   }
+}
+
+.cart {
+  .container {
+    &__inner {
+      width: 1150px;
+      margin: auto;
+      h1 {
+        color: #fff;
+        font-size: 30px;
+        text-align: center;
+      }
+      .cartItems {
+        .cartItem {
+          margin-top: 20px;
+          width: 100%;
+          background-color: #fff;
+          &__inner {
+            display: flex;
+            .thumbnail{
+              display: block;
+              overflow: hidden;
+              position: relative;
+              width: 200px;
+              height: 200px;
+              max-width: 220px;
+              max-height: 200px;
+              //margin: auto;
+              text-align: center;
+              img{
+                width: 100%;
+                height: auto;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                -ms-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+              }
+            }
+            dl{
+              display: block;
+              overflow: hidden;
+              position: relative;
+              width: 250px;
+              height: 200px;
+              max-width: 220px;
+              max-height: 200px;
+              margin: auto;
+              text-align: center;
+              dt{
+                position: absolute;
+                width: 100%;
+                height: auto;
+                top: 35%;
+                left: 50%;
+                -ms-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+              }
+              dd{
+                position: absolute;
+                width: 100%;
+                height: auto;
+                top: 55%;
+                left: 50%;
+                -ms-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+                p{
+                  //position: absolute;
+                  //width: 100%;
+                  //height: auto;
+                  //top: 50%;
+                  //left: 50%;
+                  //-ms-transform: translate(-50%, -50%);
+                  //transform: translate(-50%, -50%);
+                }
+              }
+              &.product--amount{
+                  dd{
+                    div{
+                      margin-top: 25px;
+                      button.amount_change_btn{
+                        display: block;
+                        margin: auto;
+                        margin-top: 7px;
+                        font-weight: bold;
+                        padding: 10px 30px;
+                        color: #fff;
+                        border-style: none;
+                        box-shadow: 2px 2px 3px 1px #666;
+                        -moz-box-shadow: 2px 2px 3px 1px #666;
+                        -webkit-box-shadow: 2px 2px 3px 1px #666;
+                        text-shadow: 1px 1px 2px #000;
+                        background: -moz-linear-gradient(bottom, #36d, #248 50%, #36d);
+                        background: -webkit-gradient(linear, left bottom, left top, from(#36d), color-stop(0.5, #248), to(#36d));
+                        &:hover {
+                          opacity: 0.8;
+                        }
+                      }
+                    }
+                  }
+              }
+            }
+            .product--delete{
+              display: block;
+              overflow: hidden;
+              position: relative;
+              width: 250px;
+              height: 200px;
+              max-width: 220px;
+              max-height: 200px;
+              margin: auto;
+              text-align: center;
+              button.product_change_btn{
+                position: absolute;
+                width: 50%;
+                height: auto;
+                top: 55%;
+                left: 50%;
+                -ms-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+                margin-left: -10px;
+                font-weight: bold;
+                padding: 10px 30px;
+                color: #fff;
+                border-style: none;
+                box-shadow: 2px 2px 3px 1px #666;
+                -moz-box-shadow: 2px 2px 3px 1px #666;
+                -webkit-box-shadow: 2px 2px 3px 1px #666;
+                text-shadow: 1px 1px 2px #000;
+                background: -moz-linear-gradient(bottom, #36d, #248 50%, #36d);
+                background: -webkit-gradient(linear, left bottom, left top, from(#36d), color-stop(0.5, #248), to(#36d));
+                &:hover {
+                  opacity: 0.8;
+                }
+              }
+
+            }
+
+          }
+
+        }
+      }
+
+    }
+  }
+
 }
 
 .admin.products_list {
