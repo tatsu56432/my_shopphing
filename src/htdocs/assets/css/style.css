@@ -92,8 +92,11 @@ h1 {
 .header__inner .header--ttl {
   margin-top: 20px;
   font-size: 30px;
-  color: #fff;
   float: left;
+}
+.header__inner .header--ttl a {
+  color: #fff;
+  text-decoration: none;
 }
 .header__inner .userBlock {
   position: relative;
