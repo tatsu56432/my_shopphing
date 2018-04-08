@@ -1,3 +1,10 @@
+<?php
+require_once 'system/define.php';
+require_once 'system/functions.php';
+$pdo = get_db_connect();
+$products_info = get_product_info($pdo);
+?>
+
 <!doctype html>
 <html lang="ja">
 <head>
@@ -5,7 +12,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src ="/assets/js/shared.js"></script>
+    <script src="/assets/js/shared.js"></script>
     <link rel="stylesheet" href="/assets/css/style.css">
 
     <title>my shoppimg site</title>
@@ -17,7 +24,7 @@
         <p class="header--ttl">my shopping site</p>
 
         <div class="userBlock">
-            <p class="userName">ようこそ！<?php if(isset($_SESSION['login_name'])) echo $_SESSION['login_name'] ?>さん</p>
+            <p class="userName">ようこそ！<?php if (isset($_SESSION['login_name'])) echo $_SESSION['login_name'] ?>さん</p>
             <p class="icon--curt"><a href=""><img src="/assets/img/header/icon--cart.png" alt="カート"></a></p>
             <p class="logout"><a href="logout.php">ログアウト</a></p>
         </div>
@@ -28,61 +35,16 @@
 
         <div class="l-container--product">
             <ul class="productsItems">
-                <li class="productsItem">
-                    <div class="productsItem__inner">
-                        <p class="thumbnail"><img src="/assets/img/uploads/main_visual_sp.jpg" alt=""></p>
-                        <p class="product--name">slow start</p>
-                        <p class="product--price">200円</p>
-                        <p class="product--status is-soldout">売り切れ</p>
-                    </div>
-                </li>
-                <li class="productsItem">
-                    <div class="productsItem__inner">
-                        <p class="thumbnail"><img src="/assets/img/uploads/kemono.jpg" alt=""></p>
-                        <p class="product--name">けものふれんず</p>
-                        <p class="product--price">200円</p>
-                        <p class="product--status is-sale">
-                            <button type="submit" value="product_id" name="purchase_btn" class="purchase_btn">カートに追加する</button>
-                        </p>
-                    </div>
-                </li>
-                <li class="productsItem">
-                    <div class="productsItem__inner">
-                        <p class="thumbnail"><img src="/assets/img/uploads/denpa.jpg" alt=""></p>
-                        <p class="product--name">電波女と青春男</p>
-                        <p class="product--price">200円</p>
-                        <p class="product--status is-soldout">売り切れ</p>
-                    </div>
-                </li>
-                <li class="productsItem">
-                    <div class="productsItem__inner">
-                        <p class="thumbnail"><img src="/assets/img/uploads/rizero.jpg" alt=""></p>
-                        <p class="product--name">Ｒｅ：ゼロから始める異世界生活</p>
-                        <p class="product--price">200円</p>
-                        <p class="product--status is-soldout">売り切れ</p>
-                    </div>
-                </li>
-                <li class="productsItem">
-                    <div class="productsItem__inner">
-                        <p class="thumbnail"><img src="/assets/img/uploads/kemono.jpg" alt=""></p>
-                        <p class="product--name">けものふれんず</p>
-                        <p class="product--price">200円</p>
-                        <p class="product--status is-sale">
-                            <button type="submit" value="product_id" name="purchase_btn" class="purchase_btn">カートに追加する</button>
-                        </p>
-                    </div>
-                </li>
-                <li class="productsItem">
-                    <div class="productsItem__inner">
-                        <p class="thumbnail"><img src="/assets/img/uploads/kemono.jpg" alt=""></p>
-                        <p class="product--name">けものふれんず</p>
-                        <p class="product--price">200円</p>
-                        <p class="product--status is-sale">
-                            <button type="submit" value="product_id" name="purchase_btn" class="purchase_btn">カートに追加する</button>
-                        </p>
-                    </div>
-                </li>
 
+                <?php
+                $id_array = get_target_column($products_info, 'id');
+                $name_array = get_target_column($products_info, 'name');
+                $price_array = get_target_column($products_info, 'price');
+                $drink_img_path_array = get_target_column($products_info, 'img');
+                $status_array = get_target_column($products_info, 'status');
+                $num_of_stock = get_target_column($products_info, 'stock');
+                display_productItem_index($products_info, $id_array, $name_array, $price_array, $drink_img_path_array, $status_array, $num_of_stock);
+                ?>
             </ul>
 
         </div>

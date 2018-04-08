@@ -70,6 +70,7 @@ $products_info = get_product_info($pdo);
 
         </div>
 
+        <?php if(isset($success_message)) echo "<p style='text-align: center;color: red;margin-bottom: 30px'>". $success_message ."</p>" ;?>
         <ul class="productsItems">
 
             <?php

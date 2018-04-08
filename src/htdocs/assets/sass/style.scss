@@ -154,9 +154,12 @@ h1 {
           margin-top: 30px;
           background-color: #fff;
           border: 1px solid;
+          display: flex;
           &__inner {
             width: 200px;
             padding: 10px;
+            display: flex;
+            flex-direction: column;
             .thumbnail {
               display: block;
               overflow: hidden;
@@ -188,7 +191,8 @@ h1 {
               text-align: center;
             }
             .product--status {
-              margin-top: 10px;
+              margin-top:25px;
+              margin-bottom: 13px;
               text-align: center;
               &.is-soldout {
                 color: red;

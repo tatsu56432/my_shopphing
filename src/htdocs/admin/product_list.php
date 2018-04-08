@@ -85,8 +85,9 @@ if ($submit_stock) {
         $data['error'] = $error;
         escape($data['error']);
     } else {
-        $success_message = update_inventory_control($pdo, $post_data);
-        header("Location:" . ADMIN_PRODUCT_PAGE);
+        $success_message = update_stock($pdo, $post_data);
+        $data['success_message'] = $success_message;
+//        header("Location:" . ADMIN_PRODUCT_PAGE);
 //        $_SESSION = array();
 //        session_destroy();
     }
@@ -98,10 +99,11 @@ if ($submit_status) {
     $post_data = array();
     $product_id = isset($_POST['product_status_id']) ? $_POST['product_status_id'] : NULL;
     $status_reverse_value = isset($_POST['product_status_value']) ? $_POST['product_status_value'] : NULL;
+    $status_reverse_value = intval($status_reverse_value);
 
     $post_data['id'] = $product_id;
     $post_data['status_reverse_value'] = $status_reverse_value;
-    update_drink_info($pdo, $post_data);
+    update_product_info($pdo, $post_data);
     header("Location:" . ADMIN_PRODUCT_PAGE);
 }
 

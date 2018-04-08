@@ -233,7 +233,7 @@ function get_db_data($pdo)
 //table 個別商品用tableと在庫管理用のtableへのデータ挿入処理
 function insert_product_data($pdo, $product_data, $stock)
 {
-    
+
     $pdo->beginTransaction();
     try{
         if (is_array($product_data)) {
@@ -282,27 +282,35 @@ function insert_product_data($pdo, $product_data, $stock)
 }
 
 //在庫数の変更に伴う在庫管理テーブル更新用の処理
-function update_inventory_control($pdo, $update_data)
+function update_stock($pdo, $update_data)
 {
-    if (is_array($update_data)) {
-        $id = $update_data['id'];
-        $num_of_stock_changed = $update_data['num_of_stock_changed'];
-        $num_of_stock_changed = intval($num_of_stock_changed);
-        $updated_at = date('Ymd');
-        $statement = $pdo->query("SET NAMES utf8;");
-        $statement = $pdo->prepare("UPDATE inventory_control SET num_of_stock = :num_of_stock , updated_at = :updated_at WHERE id = :id");
-        $statement->bindValue(':id', $id, PDO::PARAM_INT);
-        $statement->bindValue(':num_of_stock', $num_of_stock_changed, PDO::PARAM_INT);
-        $statement->bindParam(':updated_at', $updated_at, PDO::PARAM_STR);
-        $statement->execute();
 
-        $success_message = '在庫数の更新に成功しました。';
-        return $success_message;
+    $pdo->beginTransaction();
 
-    } else {
-        $error = 'データの挿入に失敗しました。';
-        echo $error;
+    try{
+        if (is_array($update_data)) {
+            $id = $update_data['id'];
+            $num_of_stock_changed = $update_data['num_of_stock_changed'];
+            $num_of_stock_changed = intval($num_of_stock_changed);
+            $statement = $pdo->query("SET NAMES utf8;");
+            $statement = $pdo->prepare("UPDATE stock SET stock = :num_of_stock , updated_at = :updated_at WHERE id = :id");
+            $statement->bindValue(':id', $id, PDO::PARAM_INT);
+            $statement->bindValue(':num_of_stock', $num_of_stock_changed, PDO::PARAM_INT);
+            $statement->bindValue(':updated_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+            $statement->execute();
+            $pdo->commit();
+            $success_message = '在庫数の更新に成功しました。';
+            return $success_message;
+        } else {
+            $error = 'データの挿入に失敗しました。';
+            echo $error;
+        }
+    }catch (PDOException $e){
+        $pdo->rollback();
+        throw $e;
     }
+
+
 }
 
 //購入による、在庫管理数のアップデート処理
@@ -322,24 +330,33 @@ function update_inventory_control_by_purchase($pdo, $update_product_id)
     }
 }
 
-function update_drink_info($pdo, $update_data)
+function update_product_info($pdo, $update_data)
 {
 
-    if (is_array($update_data)) {
-        $id = $update_data['id'];
-        $status_reverse_value = $update_data['status_reverse_value'];
-        $status_reverse_value = intval($status_reverse_value);
-//        $updated_at = date('Ymd');
-        $statement = $pdo->query("SET NAMES utf8;");
-        $statement = $pdo->prepare("UPDATE item SET status = :status_reverse_value , updated_at = :updated_at WHERE id = :id");
-        $statement->bindValue(':id', $id, PDO::PARAM_INT);
-        $statement->bindValue(':status_reverse_value', $status_reverse_value, PDO::PARAM_INT);
-        $statement->bindValue(':updated_at', $updated_at, PDO::PARAM_STR);
-        $statement->execute();
-    } else {
-        $error = 'データの更新に失敗しました。';
-        echo $error;
+    $pdo -> beginTransaction();
+
+    try{
+        if (is_array($update_data)) {
+            $id = $update_data['id'];
+            $status_reverse_value = $update_data['status_reverse_value'];
+            $status_reverse_value = intval($status_reverse_value);
+            $statement = $pdo->query("SET NAMES utf8;");
+            $statement = $pdo->prepare("UPDATE item SET status = :status_reverse_value , updated_at = :updated_at WHERE id = :id");
+            $statement->bindValue(':id', $id, PDO::PARAM_INT);
+            $statement->bindValue(':status_reverse_value', $status_reverse_value, PDO::PARAM_INT);
+            $statement->bindValue(':updated_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+            $statement->execute();
+            $pdo -> commit();
+        } else {
+            $error = 'データの更新に失敗しました。';
+            echo $error;
+        }
+    }catch (PDOException $e){
+        $pdo -> rollback();
+        throw $e;
     }
+
+
 }
 
 
@@ -422,9 +439,9 @@ function display_productItem_admin($data, $id_vars = NULL, $name_vars = NULL, $p
     if (is_array($data) && isset($data)) {
         foreach ($data as $key => $val) {
             //非公開用のクラスをセット
-            $status_class[$i] = $status_vars[$i] == 0 ? "is-hidden" : NULL;
+            $status_class[$i] = $status_vars[$i] === 0 ? "is-hidden" : NULL;
             //公開非公開用ボタンのvalueをセット
-            $status_reverse_value[$i] = $status_vars[$i] === "0" ? 1 : 0;
+            $status_reverse_value[$i] = $status_vars[$i] === 0 ? 1 : 0;
 
             $productItem = <<<HTML
                 <li class="productsItem {$status_class[$i]}">
@@ -489,18 +506,21 @@ function display_productItem_index($data, $id_vars = NULL, $name_vars = NULL, $p
     if (is_array($data) && isset($data)) {
         foreach ($data as $key => $val) {
             $status_element[$i] = $num_of_stock_vars[$i] == "0" ? "<p>売り切れ</p>" : "<button type=\"submit\" value=\"$id_vars[$i]\" name=\"purchase_btn\" class=\"purchase_btn\">カートに追加する</button>";
+            $status_class[$i] = $num_of_stock_vars[$i] == "0" ? "is-soldout" : NULL;
+
             //商品ステータスが0ならスキップ
             if ($status_vars[$i] == "0") {
                 $i++;
                 continue;
             } else {
                 $productsItem = <<<HTML
+
                 <li class="productsItem">
                     <div class="productsItem__inner">
                         <p class="thumbnail"><img src="{$drink_img_path_vars[$i]}" alt=""></p>
                         <p class="product--name">{$name_vars[$i]}</p>
                         <p class="product--price">{$price_vars[$i]}円</p>
-                        <div class="product--status is-soldout">{$status_element[$i]}</div>
+                        <div class="product--status {$status_class[$i]}">{$status_element[$i]}</div>
                     </div>
                 </li>
 HTML;

@@ -147,10 +147,13 @@ h1 {
   margin-top: 30px;
   background-color: #fff;
   border: 1px solid;
+  display: flex;
 }
 .index .container__inner .productsItems .productsItem__inner {
   width: 200px;
   padding: 10px;
+  display: flex;
+  flex-direction: column;
 }
 .index .container__inner .productsItems .productsItem__inner .thumbnail {
   display: block;
@@ -183,7 +186,8 @@ h1 {
   text-align: center;
 }
 .index .container__inner .productsItems .productsItem__inner .product--status {
-  margin-top: 10px;
+  margin-top: 25px;
+  margin-bottom: 13px;
   text-align: center;
 }
 .index .container__inner .productsItems .productsItem__inner .product--status.is-soldout {

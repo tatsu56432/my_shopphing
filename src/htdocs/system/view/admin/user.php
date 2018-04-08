@@ -7,8 +7,19 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>admin page top</title>
 </head>
-<body>
-admin.php
+<body class="admin user_list">
+<div class="container">
+    <div class="container__inner">
+        <h1>user list</h1>
+
+        <ul class="userItems">
+            <li>
+                <p class="name"></p>
+            </li>
+        </ul>
+
+    </div>
+</div>
 </body>
 </html>
 
