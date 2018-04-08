@@ -234,12 +234,16 @@ function get_db_data($pdo)
 function insert_product_data($pdo, $product_data, $stock)
 {
 
-//    $pdo->beginTransaction();
-
+    //エラーにデータの挿入ができなくなる。。
+    //$pdo->beginTransaction();
+    //PHP Fatal error:  Uncaught exception 'PDOException' with message 'There is already an active transaction'
     try{
         if (is_array($product_data)) {
             $id = NULL;
-            $item_id = mt_rand(1, 6);
+            $item_id = "";
+            for($i = 0;$i < 6;$i ++){
+                $item_id.=mt_rand(0, 9);
+            }
             $name = $product_data['product_name'];
             $price = $product_data['price'];
             $img_path = $product_data['img'];
@@ -414,7 +418,7 @@ function get_target_column($data, $target)
 }
 
 //toolページ商品一覧出力用関数
-function display_productItem_tools($data, $id_vars = NULL, $name_vars = NULL, $price_vars = NULL, $drink_img_path_vars = NULL, $status_vars = NULL)
+function display_productItem_admin($data, $id_vars = NULL, $name_vars = NULL, $price_vars = NULL, $drink_img_path_vars = NULL, $status_vars = NULL)
 {
     $i = 0;
     if (is_array($data) && isset($data)) {

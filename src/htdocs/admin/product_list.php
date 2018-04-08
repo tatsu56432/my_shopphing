@@ -2,14 +2,12 @@
 session_start();
 require_once '../system/define.php';
 require_once '../system/functions.php';
-
 $pdo = get_db_connect();
-$products_info = get_product_info($pdo);
+
 
 $product_name = isset($_POST['product_name']) ? $_POST['product_name'] : NULL;
 $price = isset($_POST['price']) ? $_POST['price'] : NULL;
 $stock = isset($_POST['num']) ? $_POST['num'] : NULL;
-//$_SESSION['image'] = isset($_FILES['image']) ? $_FILES['image'] : NULL;
 $status = isset($_POST['status']) ? $_POST['status'] : NULL;
 
 $submit = isset($_POST['submit']) ? $_POST['submit'] : NULL;
@@ -20,12 +18,6 @@ $post_product_data = array();
 $data = array();
 
 if ($submit) {
-
-//    var_dump($_POST);
-//    $product_name = isset($_SESSION['product_name']) ? $_POST['product_name'] : NULL;
-//    $price = isset($_SESSION['price']) ? $_POST['price'] : NULL;
-//    $stock = isset($_SESSION['num']) ? $_POST['num'] : NULL;
-//    $status = isset($_SESSION['status']) ? $_POST['status'] : NULL;
 
     if (is_uploaded_file($_FILES["image"]["tmp_name"])) {
         $image = true;
@@ -41,7 +33,6 @@ if ($submit) {
     $post_product_data['image'] = $img_object['mime'];
     $post_product_data['status'] = $status;
 
-//    var_dump($post_product_data);
 
     $error = validate_admin_post_product($post_product_data);
 
@@ -68,7 +59,6 @@ if ($submit) {
         }
         $num_of_stock = $stock;
 
-        var_dump($data);
         insert_product_data($pdo, $data, $num_of_stock);
         header("Location:" . ADMIN_PRODUCT_PAGE);
 

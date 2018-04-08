@@ -1,3 +1,9 @@
+<?php
+require_once '../system/define.php';
+require_once '../system/functions.php';
+$pdo = get_db_connect();
+$products_info = get_product_info($pdo);
+?>
 <!doctype html>
 <html lang="ja">
 <head>
@@ -65,6 +71,17 @@
         </div>
 
         <ul class="productsItems">
+
+            <?php
+
+            $id_array = get_target_column($products_info, 'id');
+            $name_array = get_target_column($products_info, 'name');
+            $price_array = get_target_column($products_info, 'price');
+            $drink_img_path_array = get_target_column($products_info, 'img');
+            $status_array = get_target_column($products_info, 'status');
+            display_productItem_admin($products_info, $id_array, $name_array, $price_array, $drink_img_path_array, $status_array);
+
+            ?>
 <!--            <li class="productsItem {$status_class[$i]}">-->
 <!--                <dl>-->
 <!--                    <dt>商品画像</dt>-->
