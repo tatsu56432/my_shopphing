@@ -45,8 +45,11 @@ button {
 
 body {
   line-height: 1;
-  background-color: #111;
+  //background-color: #111;
   font-family: Lato, "Noto Sans JP", "游ゴシック Medium", "游ゴシック体", "Yu Gothic Medium", YuGothic, "ヒラギノ角ゴ ProN", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+  &.index{
+    background-color: #111;
+  }
 }
 
 ol, ul, li {
@@ -81,7 +84,8 @@ h1 {
 
 .header {
   height: 80px;
-  background-color: #0000ed;
+  background: #332b2bd4;
+  //background-color: #0000ed;
   &__inner {
     width: 1100px;
     margin: auto;
@@ -122,6 +126,7 @@ h1 {
 
 .index {
   .container {
+
     &__inner {
       width: 1280px;
 
@@ -212,7 +217,7 @@ h1 {
   }
 }
 
-.tool {
+.admin.products_list {
   h1 {
 
   }
@@ -235,6 +240,7 @@ h1 {
         padding: 20px;
         width: 500px;
         margin: auto;
+        margin-bottom: 40px;
         border: 2px solid #000;
         .formBlock__item {
           margin-top: 20px;
@@ -302,6 +308,39 @@ h1 {
               justify-content: center;
               align-items: center;
               & {
+                display: block;
+                overflow: hidden;
+                position: relative;
+                width: 200px;
+                height: 200px;
+                max-width: 200px;
+                max-height: 200px;
+                margin: auto;
+                text-align: center;
+                p{
+                  width: 100%;
+                  height: auto;
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  -ms-transform: translate(-50%, -50%);
+                  transform: translate(-50%, -50%);
+                  button.status_btn{
+                    font-weight: bold;
+                    padding: 10px 30px;
+                    color: #fff;
+                    border-style: none;
+                    box-shadow: 2px 2px 3px 1px #666;
+                    -moz-box-shadow: 2px 2px 3px 1px #666;
+                    -webkit-box-shadow: 2px 2px 3px 1px #666;
+                    text-shadow: 1px 1px 2px #000;
+                    background: -moz-linear-gradient(bottom, #36d, #248 50%, #36d);
+                    background: -webkit-gradient(linear, left bottom, left top, from(#36d), color-stop(0.5, #248), to(#36d));
+                    &:hover {
+                      opacity: 0.8;
+                    }
+                  }
+                }
                 .thumbnail {
                   display: block;
                   overflow: hidden;
@@ -313,6 +352,7 @@ h1 {
                   margin: auto;
                   text-align: center;
                   img {
+                    width: 100%;
                     height: auto;
                     position: absolute;
                     top: 50%;
@@ -321,6 +361,7 @@ h1 {
                     transform: translate(-50%, -50%);
                   }
                 }
+
               }
             }
           }

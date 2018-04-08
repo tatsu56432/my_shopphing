@@ -466,8 +466,7 @@ function display_productItem_index($data, $id_vars = NULL, $name_vars = NULL, $p
     $status_element = array();
     if (is_array($data) && isset($data)) {
         foreach ($data as $key => $val) {
-            $status_element[$i] = $num_of_stock_vars[$i] == "0" ? "<p>売り切れ</p>" : "<input type=\"radio\" name=\"product_radio\" id=\"$id_vars[$i]\" value=\"$id_vars[$i]\">";
-
+            $status_element[$i] = $num_of_stock_vars[$i] == "0" ? "<p>売り切れ</p>" : "<button type=\"submit\" value=\"$id_vars[$i]\" name=\"purchase_btn\" class=\"purchase_btn\">カートに追加する</button>";
             //商品ステータスが0ならスキップ
             if ($status_vars[$i] == "0") {
                 $i++;
@@ -476,12 +475,10 @@ function display_productItem_index($data, $id_vars = NULL, $name_vars = NULL, $p
                 $productsItem = <<<HTML
                 <li class="productsItem">
                     <div class="productsItem__inner">
-                        <p class="thumbnail js-thumbnail"><img src="{$drink_img_path_vars[$i]}" alt="{$name_vars[$i]}"></p>
-                        <p class="name">{$name_vars[$i]}</p>
-                        <p class="price">{$price_vars[$i]}円</p>
-                        <div class="status">
-                         $status_element[$i]            
-                        </div>
+                        <p class="thumbnail"><img src="{$drink_img_path_vars[$i]}" alt=""></p>
+                        <p class="product--name">{$name_vars[$i]}</p>
+                        <p class="product--price">{$price_vars[$i]}円</p>
+                        <div class="product--status is-soldout">{$status_element[$i]}</div>
                     </div>
                 </li>
 HTML;

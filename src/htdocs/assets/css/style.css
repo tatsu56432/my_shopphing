@@ -44,8 +44,10 @@ button {
 
 body {
   line-height: 1;
-  background-color: #111;
   font-family: Lato, "Noto Sans JP", "游ゴシック Medium", "游ゴシック体", "Yu Gothic Medium", YuGothic, "ヒラギノ角ゴ ProN", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+}
+body.index {
+  background-color: #111;
 }
 
 ol, ul, li {
@@ -80,7 +82,7 @@ h1 {
 
 .header {
   height: 80px;
-  background-color: #0000ed;
+  background: #332b2bd4;
 }
 .header__inner {
   width: 1100px;
@@ -203,36 +205,37 @@ h1 {
   opacity: 0.8;
 }
 
-.tool h2 {
+.admin.products_list h2 {
   font-size: 25px;
   font-weight: bold;
 }
-.tool .tool--ttl {
+.admin.products_list .tool--ttl {
   text-align: center;
   font-size: 16px;
 }
-.tool .container__inner {
+.admin.products_list .container__inner {
   width: 1260px;
   margin: auto;
   padding: 20px;
 }
-.tool .container__inner .formBlock {
+.admin.products_list .container__inner .formBlock {
   padding: 20px;
   width: 500px;
   margin: auto;
+  margin-bottom: 40px;
   border: 2px solid #000;
 }
-.tool .container__inner .formBlock .formBlock__item {
+.admin.products_list .container__inner .formBlock .formBlock__item {
   margin-top: 20px;
 }
-.tool .container__inner .formBlock .formBlock__item:first-child {
+.admin.products_list .container__inner .formBlock .formBlock__item:first-child {
   margin-top: 0;
 }
-.tool .container__inner .productsItems {
+.admin.products_list .container__inner .productsItems {
   width: 1280px;
   margin: auto;
 }
-.tool .container__inner .productsItems .productsItem {
+.admin.products_list .container__inner .productsItems .productsItem {
   display: -webkit-box;
   display: -moz-box;
   display: -webkit-flexbox;
@@ -246,33 +249,33 @@ h1 {
   border-left: 1px solid #000;
   border-right: 1px solid #000;
 }
-.tool .container__inner .productsItems .productsItem.is-hidden dl {
+.admin.products_list .container__inner .productsItems .productsItem.is-hidden dl {
   background-color: grey;
 }
-.tool .container__inner .productsItems .productsItem:last-child {
+.admin.products_list .container__inner .productsItems .productsItem:last-child {
   border-bottom: 1px solid #000;
 }
-.tool .container__inner .productsItems .productsItem:not(:first-child) dl dt {
+.admin.products_list .container__inner .productsItems .productsItem:not(:first-child) dl dt {
   display: none;
 }
-.tool .container__inner .productsItems .productsItem dl {
+.admin.products_list .container__inner .productsItems .productsItem dl {
   width: 25%;
   border-right: 1px solid #000;
 }
-.tool .container__inner .productsItems .productsItem dl:last-child {
+.admin.products_list .container__inner .productsItems .productsItem dl:last-child {
   border-right: 1px solid #000;
 }
-.tool .container__inner .productsItems .productsItem dl dt {
+.admin.products_list .container__inner .productsItems .productsItem dl dt {
   background-color: #fff;
   padding: 10px;
   border-bottom: 1px solid #000;
 }
-.tool .container__inner .productsItems .productsItem dl dd {
+.admin.products_list .container__inner .productsItems .productsItem dl dd {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.tool .container__inner .productsItems .productsItem dl dd .thumbnail {
+.admin.products_list .container__inner .productsItems .productsItem dl dd {
   display: block;
   overflow: hidden;
   position: relative;
@@ -283,7 +286,43 @@ h1 {
   margin: auto;
   text-align: center;
 }
-.tool .container__inner .productsItems .productsItem dl dd .thumbnail img {
+.admin.products_list .container__inner .productsItems .productsItem dl dd p {
+  width: 100%;
+  height: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+.admin.products_list .container__inner .productsItems .productsItem dl dd p button.status_btn {
+  font-weight: bold;
+  padding: 10px 30px;
+  color: #fff;
+  border-style: none;
+  box-shadow: 2px 2px 3px 1px #666;
+  -moz-box-shadow: 2px 2px 3px 1px #666;
+  -webkit-box-shadow: 2px 2px 3px 1px #666;
+  text-shadow: 1px 1px 2px #000;
+  background: -moz-linear-gradient(bottom, #36d, #248 50%, #36d);
+  background: -webkit-gradient(linear, left bottom, left top, from(#36d), color-stop(0.5, #248), to(#36d));
+}
+.admin.products_list .container__inner .productsItems .productsItem dl dd p button.status_btn:hover {
+  opacity: 0.8;
+}
+.admin.products_list .container__inner .productsItems .productsItem dl dd .thumbnail {
+  display: block;
+  overflow: hidden;
+  position: relative;
+  width: 200px;
+  height: 200px;
+  max-width: 200px;
+  max-height: 200px;
+  margin: auto;
+  text-align: center;
+}
+.admin.products_list .container__inner .productsItems .productsItem dl dd .thumbnail img {
+  width: 100%;
   height: auto;
   position: absolute;
   top: 50%;

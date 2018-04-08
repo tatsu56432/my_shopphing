@@ -22,12 +22,10 @@
             <p class="logout"><a href="logout.php">ログアウト</a></p>
         </div>
     </div>
-
 </header>
 <div class="container">
     <div class="container__inner">
 
-        <p class="">商品一覧</p>
         <div class="l-container--product">
             <ul class="productsItems">
                 <li class="productsItem">
@@ -44,7 +42,7 @@
                         <p class="product--name">けものふれんず</p>
                         <p class="product--price">200円</p>
                         <p class="product--status is-sale">
-                            <button type="submit" value="product_id" name="purchase_btn" class="purchase_btn">購入する</button>
+                            <button type="submit" value="product_id" name="purchase_btn" class="purchase_btn">カートに追加する</button>
                         </p>
                     </div>
                 </li>
@@ -58,8 +56,8 @@
                 </li>
                 <li class="productsItem">
                     <div class="productsItem__inner">
-                        <p class="thumbnail"><img src="/assets/img/uploads/main_visual_sp.jpg" alt=""></p>
-                        <p class="product--name">slow start</p>
+                        <p class="thumbnail"><img src="/assets/img/uploads/rizero.jpg" alt=""></p>
+                        <p class="product--name">Ｒｅ：ゼロから始める異世界生活</p>
                         <p class="product--price">200円</p>
                         <p class="product--status is-soldout">売り切れ</p>
                     </div>
@@ -70,7 +68,7 @@
                         <p class="product--name">けものふれんず</p>
                         <p class="product--price">200円</p>
                         <p class="product--status is-sale">
-                            <button type="submit" value="product_id" name="purchase_btn" class="purchase_btn">購入する</button>
+                            <button type="submit" value="product_id" name="purchase_btn" class="purchase_btn">カートに追加する</button>
                         </p>
                     </div>
                 </li>
@@ -80,7 +78,7 @@
                         <p class="product--name">けものふれんず</p>
                         <p class="product--price">200円</p>
                         <p class="product--status is-sale">
-                            <button type="submit" value="product_id" name="purchase_btn" class="purchase_btn">購入する</button>
+                            <button type="submit" value="product_id" name="purchase_btn" class="purchase_btn">カートに追加する</button>
                         </p>
                     </div>
                 </li>
