@@ -13,7 +13,7 @@
      CREATE TABLE stock
      (
      id INT(11) unsigned NOT NULL AUTO_INCREMENT,
-     item_id INT(11) NOT NULL,
+     item_id INT(11) NOT NULL ,
      stock int(11) unsigned NOT NULL,
      created_at datetime NOT NULL,
      updated_at datetime NOT NULL,

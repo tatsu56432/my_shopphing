@@ -76,7 +76,7 @@ function register_user($pdo,$data){
                 $statement->bindValue(':created_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
                 $statement->bindValue(':updated_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
                 $statement->execute();
-                $pdo->commit();
+
 
                 $result_comment =  "登録しました。";
                 return $result_comment;
@@ -90,6 +90,8 @@ function register_user($pdo,$data){
         $pdo->rollback();
         throw $e;
     }
+
+    $pdo->commit();
 
 }
 
@@ -228,42 +230,44 @@ function get_db_data($pdo)
 
 
 //table 個別商品用tableと在庫管理用のtableへのデータ挿入処理
-function insert_drink_data($pdo, $drink_data, $stock)
+function insert_product_data($pdo, $product_data, $stock)
 {
-    if (is_array($drink_data)) {
-        $id = NULL;
-        $drink_name = $drink_data['product_name'];
-        $drink_price = $drink_data['price'];
-        $drink_img_path = $drink_data['drink_img_path'];
-        $created_at = date('Ymd');
-        $updated_at = date('Ymd');
-        $status = $drink_data['status'];
-        $num_of_stock = $stock;
 
-        $statement = $pdo->query("SET NAMES utf8;");
-        $statement = $pdo->prepare("INSERT INTO drink_info (id , drink_name, drink_price , drink_img_path , created_at , updated_at, status) VALUES (:id , :drink_name , :drink_price , :drink_img_path , :created_at , :updated_at , :status)");
-        $statement->bindValue(':id', $id, PDO::PARAM_INT);
-        $statement->bindParam(':drink_name', $drink_name, PDO::PARAM_STR);
-        $statement->bindParam(':drink_price', $drink_price, PDO::PARAM_STR);
-        $statement->bindParam(':drink_img_path', $drink_img_path, PDO::PARAM_STR);
-        $statement->bindParam(':created_at', $created_at, PDO::PARAM_STR);
-        $statement->bindParam(':updated_at', $updated_at, PDO::PARAM_STR);
-        $statement->bindParam(':status', $status, PDO::PARAM_INT);
-        $statement->execute();
+        if (is_array($product_data)) {
+            $id = NULL;
+            $item_id = mt_rand(1, 6);
+            $name = $product_data['product_name'];
+            $price = $product_data['price'];
+            $img_path = $product_data['img'];
+            $status = $product_data['status'];
+            $num_of_stock = $stock;
+            $statement = $pdo->query("SET NAMES utf8;");
+            $statement = $pdo->prepare("INSERT INTO item (id , name, price , img , status , created_at , updated_at) VALUES (:id , :name , :price , :img , :status , :created_at , :updated_at )");
+            $statement->bindValue(':id', $id, PDO::PARAM_INT);
+            $statement->bindParam(':name', $name, PDO::PARAM_STR);
+            $statement->bindParam(':price', $price, PDO::PARAM_STR);
+            $statement->bindParam(':img', $img_path, PDO::PARAM_STR);
+            $statement->bindParam(':status', $status, PDO::PARAM_INT);
+            $statement->bindValue(':created_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+            $statement->bindValue(':updated_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+            $statement->execute();
+
+            $statement = $pdo->query("SET NAMES utf8;");
+            $statement = $pdo->prepare("INSERT INTO stock (id , item_id , stock, created_at , updated_at) VALUES (:id ,:item_id , :stock , :created_at , :updated_at)");
+            $statement->bindValue(':id', $id, PDO::PARAM_INT);
+            $statement->bindParam(':item_id', $item_id, PDO::PARAM_INT);
+            $statement->bindParam(':stock', $num_of_stock, PDO::PARAM_INT);
+            $statement->bindValue(':created_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+            $statement->bindValue(':updated_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+            $statement->execute();
+        } else {
+            $error = 'データの受け渡しに失敗しました。';
+            echo $error;
+        }
 
 
-        $statement = $pdo->query("SET NAMES utf8;");
-        $statement = $pdo->prepare("INSERT INTO inventory_control(id , num_of_stock, created_at , updated_at) VALUES (:id , :num_of_stock , :created_at , :updated_at)");
-        $statement->bindValue(':id', $id, PDO::PARAM_INT);
-        $statement->bindValue(':num_of_stock', $num_of_stock, PDO::PARAM_INT);
-        $statement->bindParam(':created_at', $created_at, PDO::PARAM_STR);
-        $statement->bindParam(':updated_at', $updated_at, PDO::PARAM_STR);
-        $statement->execute();
 
-    } else {
-        $error = 'データの挿入に失敗しました。';
-        echo $error;
-    }
+
 }
 
 //在庫数の変更に伴う在庫管理テーブル更新用の処理
@@ -314,12 +318,12 @@ function update_drink_info($pdo, $update_data)
         $id = $update_data['id'];
         $status_reverse_value = $update_data['status_reverse_value'];
         $status_reverse_value = intval($status_reverse_value);
-        $updated_at = date('Ymd');
+//        $updated_at = date('Ymd');
         $statement = $pdo->query("SET NAMES utf8;");
-        $statement = $pdo->prepare("UPDATE drink_info SET status = :status_reverse_value , updated_at = :updated_at WHERE id = :id");
+        $statement = $pdo->prepare("UPDATE item SET status = :status_reverse_value , updated_at = :updated_at WHERE id = :id");
         $statement->bindValue(':id', $id, PDO::PARAM_INT);
         $statement->bindValue(':status_reverse_value', $status_reverse_value, PDO::PARAM_INT);
-        $statement->bindParam(':updated_at', $updated_at, PDO::PARAM_STR);
+        $statement->bindValue(':updated_at', $updated_at, PDO::PARAM_STR);
         $statement->execute();
     } else {
         $error = 'データの更新に失敗しました。';
@@ -328,26 +332,34 @@ function update_drink_info($pdo, $update_data)
 }
 
 
-function get_drink_info($pdo)
+function get_product_info($pdo)
 {
-    $data = array();
-    $statement = $pdo->query("SET NAMES utf8;");
 
-    //tableの内部結合
-    $statement = $pdo->query("SELECT drink_info.*,inventory_control.num_of_stock FROM drink_info INNER JOIN inventory_control ON drink_info.id = inventory_control.id");
-    while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-        $data[] = array(
-            'id' => $row["id"],
-            'drink_name' => $row["drink_name"],
-            'drink_price' => $row["drink_price"],
-            'drink_img_path' => $row["drink_img_path"],
-            'created_at' => $row["created_at"],
-            'updated_at' => $row["updated_at"],
-            'status' => $row["status"],
-            'num_of_stock' => $row["num_of_stock"]
-        );
+    $pdo->beginTransaction();
+    try{
+        $data = array();
+        $statement = $pdo->query("SET NAMES utf8;");
+        //tableの内部結合
+        $statement = $pdo->query("SELECT item.*,stock.stock FROM item INNER JOIN stock ON item.id = stock.id");
+        while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+            $data[] = array(
+                'id' => $row["id"],
+                'name' => $row["name"],
+                'price' => $row["price"],
+                'img' => $row["img"],
+                'created_at' => $row["created_at"],
+                'updated_at' => $row["updated_at"],
+                'status' => $row["status"],
+                'stock' => $row["stock"]
+            );
+        }
+        return $data;
+
+    }catch (PDOException $e){
+        $pdo->rollback();
+        throw $e;
     }
-    return $data;
+
 }
 
 function get_product_purchased($pdo,$post_id)
@@ -407,7 +419,7 @@ function display_productItem_tools($data, $id_vars = NULL, $name_vars = NULL, $p
                 <li class="productsItem {$status_class[$i]}">
                 <dl>
                     <dt>商品画像</dt>
-                    <dd>
+                    <dd class="thumbnail">
                         <p class="thumbnail js-thumbnail"><img src="{$drink_img_path_vars[$i]}" alt=""></p>
                     </dd>
                 </dl>
@@ -417,7 +429,7 @@ function display_productItem_tools($data, $id_vars = NULL, $name_vars = NULL, $p
                 </dl>
                 <dl>
                     <dt>価格</dt>
-                    <dd><p>{$price_vars[$i]}円</p></dd>
+                    <dd><p>{$price_vars[$i]}</p></dd>
                 </dl>
                 <dl>
                     <dt>在庫数</dt>
@@ -428,9 +440,8 @@ function display_productItem_tools($data, $id_vars = NULL, $name_vars = NULL, $p
                                     <input type="hidden" name="product_stock_id" value="{$id_vars[$i]}">
                                     <input type="text" name="num_of_stock_changed" value="">個
                                 </p>
-                                <p>
-                                    <input type="submit" name="submit_stock" value="在庫数更新">
-                                </p>
+
+                                <input type="submit" name="submit_stock" class="submit_stock" value="在庫数更新">
                             </form>
                         </div>
                     </dd>
@@ -439,15 +450,15 @@ function display_productItem_tools($data, $id_vars = NULL, $name_vars = NULL, $p
                     <dt>ステータス</dt>
                     <dd>
                         <div class="status">
-                        <form action="" method="post">
-                        <p>
-                           <input type="hidden" name="product_status_id" value="{$id_vars[$i]}">
-                           <input type="hidden" name="product_status_value" value="{$status_reverse_value[$i]}">
-                        </p>
-                        <p>
-                        <button type="submit" name="submit_status" value="submit_status">公開→非公開</button>
-                        </p>
-                        </form>
+                            <form action="" method="post">
+                                <p>
+                                    <input type="hidden" name="product_status_id" value="{$id_vars[$i]}">
+                                    <input type="hidden" name="product_status_value" value="{$status_reverse_value[$i]}">
+                                </p>
+                                <p>
+                                    <button type="submit" name="submit_status" value="submit_status" class="status_btn">公開→非公開</button>
+                                </p>
+                            </form>
                         </div>
                     </dd>
                 </dl>
@@ -505,7 +516,7 @@ function escape($vars)
 }
 
 
-function validation_tool($input = null)
+function validate_admin_post_product($input = null)
 {
 
     if (!$input) {
