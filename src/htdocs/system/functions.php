@@ -310,6 +310,54 @@ function update_stock($pdo, $update_data)
         throw $e;
     }
 
+}
+
+
+function insert_cart($pdo,$data){
+    $pdo->beginTransaction();
+    try{
+        if(is_array($data)){
+
+            $id = NULL;
+            $user_name = $data['login_name'];
+            $product_id = $data['product_id'];
+            $statement = $pdo->query("SET NAMES utf8;");
+            $statement = $pdo->prepare('SELECT id FROM user WHERE user_name = ?');
+            $statement->execute(array($user_name));
+            $result = $statement->fetch(PDO::FETCH_COLUMN);
+            if($result !== false){
+                $user_id = $result;
+            }else{
+                return "ユーザーIDの取得に失敗しました。";
+            }
+
+            $statement = $pdo->prepare('SELECT item_id FROM stock WHERE id = ?');
+            $statement->execute(array($product_id));
+            $result = $statement->fetch(PDO::FETCH_COLUMN);
+            if($result !== false){
+                $item_id = $result;
+            }else{
+                return "item_IDの取得に失敗しました。";
+            }
+
+            $statement = $pdo->prepare("INSERT INTO cart (id , user_id , item_id , amount , created_at , updated_at) VALUES (:id , :user_id , :item_id , :amount , :created_at , :updated_at )");
+            $statement->bindValue(':id', $id, PDO::PARAM_INT);
+            $statement->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $statement->bindParam(':item_id', $item_id, PDO::PARAM_INT);
+            $statement->bindValue(':amount', 1, PDO::PARAM_INT);
+            $statement->bindValue(':created_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+            $statement->bindValue(':updated_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+            $statement->execute();
+            $pdo->commit();
+
+        }else{
+            return "error";
+        }
+    }catch (PDOException $e){
+        $pdo->rollback();
+        throw $e;
+    }
+
 
 }
 
@@ -318,11 +366,10 @@ function update_inventory_control_by_purchase($pdo, $update_product_id)
 {
     if (isset($update_product_id)) {
         $id = $update_product_id;
-        $updated_at = date('Ymd');
         $statement = $pdo->query("SET NAMES utf8;");
         $statement = $pdo->prepare("UPDATE inventory_control SET num_of_stock = num_of_stock-1 , updated_at = :updated_at WHERE id = :id");
         $statement->bindValue(':id', $id, PDO::PARAM_INT);
-        $statement->bindParam(':updated_at', $updated_at, PDO::PARAM_STR);
+        $statement->bindValue(':updated_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
         $statement->execute();
     } else {
         $error = 'データの更新に失敗しました。';
@@ -432,7 +479,7 @@ function get_target_column($data, $target)
     }
 }
 
-//toolページ商品一覧出力用関数
+//adminページ商品一覧出力用関数
 function display_productItem_admin($data, $id_vars = NULL, $name_vars = NULL, $price_vars = NULL, $drink_img_path_vars = NULL, $status_vars = NULL)
 {
     $i = 0;
@@ -505,7 +552,7 @@ function display_productItem_index($data, $id_vars = NULL, $name_vars = NULL, $p
     $status_element = array();
     if (is_array($data) && isset($data)) {
         foreach ($data as $key => $val) {
-            $status_element[$i] = $num_of_stock_vars[$i] == "0" ? "<p>売り切れ</p>" : "<button type=\"submit\" value=\"$id_vars[$i]\" name=\"purchase_btn\" class=\"purchase_btn\">カートに追加する</button>";
+            $status_element[$i] = $num_of_stock_vars[$i] == "0" ? "<p>売り切れ</p>" : "<form action='' method='post'><button type=\"submit\" value=\"$id_vars[$i]\" name=\"purchase_btn\" class=\"purchase_btn\">カートに追加する</button></form>";
             $status_class[$i] = $num_of_stock_vars[$i] == "0" ? "is-soldout" : NULL;
 
             //商品ステータスが0ならスキップ
@@ -631,39 +678,3 @@ function get_product_price($pdo, $product_id)
     $result = $statement->fetch(PDO::FETCH_ASSOC);
     return $result;
 }
-
-//indexページでのバリデーション処理
-function validation_index($post_data, $product_price)
-{
-    $error = array();
-    if (is_array($post_data) && isset($post_data)) {
-
-        $product_id = isset($post_data[0]['purchased_drink_id']) ? $post_data[0]['purchased_drink_id'] : NULL;
-        $coin = isset($post_data[0]['inputed_coin']) ? $post_data[0]['inputed_coin'] : NULL;
-
-
-        if(!isset($coin)){
-            $error['coin'] = "お金を投入してください。";
-        }
-
-        if(!preg_match("/^[0-9]+$/",$coin)){
-            $error['coin'] = "文字列は入力しないでください。";
-        }
-
-//投入金額と商品金額をint型に変換
-        $coin = intval($coin);
-        $product_price = intval($product_price['drink_price']);
-        if($coin < $product_price){
-            $error['not_enough'] =  "投入金額が足りません";
-        }
-
-        if (!isset($product_id) || empty($coin)) {
-            $error['empty'] = 'お金をいれて、商品を選択してください。';
-        }
-
-        return $error;
-    }
-
-}
-
-
