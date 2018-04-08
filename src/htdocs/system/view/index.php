@@ -43,7 +43,17 @@
                         <p class="thumbnail"><img src="/assets/img/uploads/kemono.jpg" alt=""></p>
                         <p class="product--name">けものふれんず</p>
                         <p class="product--price">200円</p>
-                        <p class="product--price">input</p>
+                        <p class="product--status is-sale">
+                            <button type="submit" value="product_id" name="purchase_btn" class="purchase_btn">購入する</button>
+                        </p>
+                    </div>
+                </li>
+                <li class="productsItem">
+                    <div class="productsItem__inner">
+                        <p class="thumbnail"><img src="/assets/img/uploads/denpa.jpg" alt=""></p>
+                        <p class="product--name">電波女と青春男</p>
+                        <p class="product--price">200円</p>
+                        <p class="product--status is-soldout">売り切れ</p>
                     </div>
                 </li>
                 <li class="productsItem">
@@ -51,33 +61,30 @@
                         <p class="thumbnail"><img src="/assets/img/uploads/main_visual_sp.jpg" alt=""></p>
                         <p class="product--name">slow start</p>
                         <p class="product--price">200円</p>
-                        <p class="product--price">input</p>
+                        <p class="product--status is-soldout">売り切れ</p>
                     </div>
                 </li>
                 <li class="productsItem">
                     <div class="productsItem__inner">
-                        <p class="thumbnail"><img src="/assets/img/uploads/main_visual_sp.jpg" alt=""></p>
-                        <p class="product--name">slow start</p>
+                        <p class="thumbnail"><img src="/assets/img/uploads/kemono.jpg" alt=""></p>
+                        <p class="product--name">けものふれんず</p>
                         <p class="product--price">200円</p>
-                        <p class="product--price">input</p>
+                        <p class="product--status is-sale">
+                            <button type="submit" value="product_id" name="purchase_btn" class="purchase_btn">購入する</button>
+                        </p>
                     </div>
                 </li>
                 <li class="productsItem">
                     <div class="productsItem__inner">
-                        <p class="thumbnail"><img src="/assets/img/uploads/main_visual_sp.jpg" alt=""></p>
-                        <p class="product--name">slow start</p>
+                        <p class="thumbnail"><img src="/assets/img/uploads/kemono.jpg" alt=""></p>
+                        <p class="product--name">けものふれんず</p>
                         <p class="product--price">200円</p>
-                        <p class="product--price">input</p>
+                        <p class="product--status is-sale">
+                            <button type="submit" value="product_id" name="purchase_btn" class="purchase_btn">購入する</button>
+                        </p>
                     </div>
                 </li>
-                <li class="productsItem">
-                    <div class="productsItem__inner">
-                        <p class="thumbnail"><img src="/assets/img/uploads/main_visual_sp.jpg" alt=""></p>
-                        <p class="product--name">slow start</p>
-                        <p class="product--price">200円</p>
-                        <p class="product--price">input</p>
-                    </div>
-                </li>
+
             </ul>
 
         </div>
