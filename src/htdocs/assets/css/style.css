@@ -1,0 +1,269 @@
+@charset "UTF-8";
+@import url(//fonts.googleapis.com/css?family=Lato:400,700);
+@import url(//fonts.googleapis.com/earlyaccess/notosansjp.css);
+/* http://meyerweb.com/eric/tools/css/reset/
+v2.0 | 20110126
+License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/*  HTML5 display-role reset for older browsers
+*/
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+  background-color: #111;
+  font-family: Lato, "Noto Sans JP", "游ゴシック Medium", "游ゴシック体", "Yu Gothic Medium", YuGothic, "ヒラギノ角ゴ ProN", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+}
+
+ol, ul, li {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+h1 {
+  margin: 30px 0;
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.error {
+  color: red;
+}
+
+.header {
+  height: 80px;
+  background-color: #0000ed;
+}
+.header__inner {
+  width: 1100px;
+  margin: auto;
+  overflow: hidden;
+}
+.header__inner .header--ttl {
+  margin-top: 20px;
+  font-size: 30px;
+  color: #fff;
+  float: left;
+}
+.header__inner .userBlock {
+  position: relative;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  color: #fff;
+  float: right;
+}
+.header__inner .userBlock .icon--curt {
+  position: absolute;
+  top: -17px;
+  left: -58px;
+  width: 50px;
+}
+.header__inner .userBlock .icon--curt img {
+  width: 100%;
+}
+.header__inner .userBlock .logout {
+  margin-top: 10px;
+  text-align: right;
+}
+.header__inner .userBlock .logout a {
+  text-decoration: none;
+  color: #fff;
+}
+
+.index .container__inner {
+  width: 1280px;
+  margin: auto;
+  padding: 20px;
+}
+.index .container__inner .formBlock {
+  width: 1000px;
+  margin: auto;
+  margin-bottom: 20px;
+}
+.index .container__inner .productsItems {
+  width: 1110px;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flexbox;
+  display: -moz-flexbox;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: flex;
+  margin: auto;
+  flex-wrap: wrap;
+}
+.index .container__inner .productsItems .productsItem {
+  margin-top: 30px;
+  background-color: #fff;
+  border: 1px solid;
+}
+.index .container__inner .productsItems .productsItem__inner {
+  width: 200px;
+  padding: 10px;
+}
+.index .container__inner .productsItems .productsItem__inner .thumbnail {
+  display: block;
+  overflow: hidden;
+  position: relative;
+  width: 200px;
+  height: 200px;
+  max-width: 200px;
+  max-height: 200px;
+  margin: auto;
+  text-align: center;
+}
+.index .container__inner .productsItems .productsItem__inner .thumbnail img {
+  width: 100%;
+  height: auto;
+  /*画像のセンタリング（中央寄せ）*/
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+.index .container__inner .productsItems .productsItem__inner .product--name {
+  margin-top: 20px;
+  text-align: center;
+}
+.index .container__inner .productsItems .productsItem__inner .product--price {
+  margin-top: 10px;
+  text-align: center;
+}
+.index .container__inner .productsItems .productsItem__inner .product--status {
+  margin-top: 10px;
+  text-align: center;
+}
+.index .container__inner .productsItems .productsItem__inner .product--status.is-soldout {
+  color: red;
+}
+
+.tool h2 {
+  font-size: 25px;
+  font-weight: bold;
+}
+.tool .tool--ttl {
+  text-align: center;
+  font-size: 16px;
+}
+.tool .container__inner {
+  width: 1260px;
+  margin: auto;
+  padding: 20px;
+}
+.tool .container__inner .formBlock {
+  padding: 20px;
+  width: 500px;
+  margin: auto;
+  border: 2px solid #000;
+}
+.tool .container__inner .formBlock .formBlock__item {
+  margin-top: 20px;
+}
+.tool .container__inner .formBlock .formBlock__item:first-child {
+  margin-top: 0;
+}
+.tool .container__inner .productsItems {
+  width: 1280px;
+  margin: auto;
+}
+.tool .container__inner .productsItems .productsItem {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flexbox;
+  display: -moz-flexbox;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: flex;
+  width: 100%;
+  border-top: 1px solid #000;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+}
+.tool .container__inner .productsItems .productsItem.is-hidden dl {
+  background-color: grey;
+}
+.tool .container__inner .productsItems .productsItem:last-child {
+  border-bottom: 1px solid #000;
+}
+.tool .container__inner .productsItems .productsItem:not(:first-child) dl dt {
+  display: none;
+}
+.tool .container__inner .productsItems .productsItem dl {
+  width: 25%;
+  border-right: 1px solid #000;
+}
+.tool .container__inner .productsItems .productsItem dl:last-child {
+  border-right: 1px solid #000;
+}
+.tool .container__inner .productsItems .productsItem dl dt {
+  background-color: #fff;
+  padding: 10px;
+  border-bottom: 1px solid #000;
+}
+.tool .container__inner .productsItems .productsItem dl dd {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.tool .container__inner .productsItems .productsItem dl dd .thumbnail {
+  display: block;
+  overflow: hidden;
+  position: relative;
+  width: 200px;
+  height: 200px;
+  max-width: 200px;
+  max-height: 200px;
+  margin: auto;
+  text-align: center;
+}
+.tool .container__inner .productsItems .productsItem dl dd .thumbnail img {
+  height: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}

@@ -1,0 +1,309 @@
+@import url(//fonts.googleapis.com/css?family=Lato:400,700);
+@import url(//fonts.googleapis.com/earlyaccess/notosansjp.css);
+
+/* http://meyerweb.com/eric/tools/css/reset/
+v2.0 | 20110126
+License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/*  HTML5 display-role reset for older browsers
+*/
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+  background-color: #111;
+  font-family: Lato, "Noto Sans JP", "游ゴシック Medium", "游ゴシック体", "Yu Gothic Medium", YuGothic, "ヒラギノ角ゴ ProN", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+}
+
+ol, ul, li {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+h1 {
+  margin: 30px 0;
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+}
+.error{
+  color: red;
+}
+
+.header{
+  height: 80px;
+  background-color: #0000ed;
+  &__inner{
+    width: 1100px;
+    margin: auto;
+    //display: flex;
+    overflow: hidden;
+    .header--ttl{
+      margin-top: 20px;
+      font-size: 30px;
+      color: #fff;
+      float: left;
+    }
+    .userBlock{
+      position: relative;
+      margin-top: 30px;
+      margin-bottom: 30px;
+      color: #fff;
+      float: right;
+      .icon--curt{
+        position: absolute;
+        top: -17px;
+        left: -58px;
+        width: 50px;
+        img{
+          width: 100%;
+        }
+      }
+      .logout{
+        margin-top: 10px;
+        text-align: right;
+        a{
+          text-decoration: none;
+          color: #fff;
+        }
+      }
+    }
+  }
+}
+
+.index {
+  .container {
+    &__inner {
+      width: 1280px;
+
+      //background-color: red;
+      margin: auto;
+      padding: 20px;
+      .formBlock{
+        width: 1000px;
+        margin: auto;
+        margin-bottom: 20px;
+      }
+      .productsItems {
+        width: 1110px;
+        display: -webkit-box;
+        display: -moz-box;
+        display: -webkit-flexbox;
+        display: -moz-flexbox;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: -moz-flex;
+        display: flex;
+        margin: auto;
+        flex-wrap: wrap;
+        .productsItem {
+          margin-top: 30px;
+          background-color: #fff;
+          border: 1px solid;
+          &__inner {
+            width: 200px;
+            padding: 10px;
+            .thumbnail {
+              display: block;
+              overflow: hidden;
+              position: relative;
+              width: 200px;
+              height: 200px;
+              max-width: 200px;
+              max-height: 200px;
+              margin: auto;
+              text-align: center;
+              img {
+                width: 100%;
+                height: auto;
+                /*画像のセンタリング（中央寄せ）*/
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                -webkit-transform: translate(-50%, -50%);
+                -ms-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+              }
+            }
+            .product--name {
+              margin-top: 20px;
+              text-align: center;
+            }
+            .product--price {
+              margin-top: 10px;
+              text-align: center;
+            }
+            .product--status {
+              margin-top: 10px;
+              text-align: center;
+              &.is-soldout{
+                color: red;
+              }
+            }
+          }
+
+        }
+      }
+    }
+  }
+}
+
+.tool {
+  h1 {
+
+  }
+  h2 {
+    font-size: 25px;
+    font-weight: bold;
+  }
+
+  .tool--ttl {
+    text-align: center;
+    font-size: 16px;
+  }
+  .container {
+    &__inner {
+      width: 1260px;
+      //background-color: red;
+      margin: auto;
+      padding: 20px;
+      .formBlock {
+        padding: 20px;
+        width: 500px;
+        margin: auto;
+        border: 2px solid #000;
+        .formBlock__item {
+          margin-top: 20px;
+          &:first-child {
+            margin-top: 0;
+          }
+        }
+      }
+
+      .productsItems {
+        width: 1280px;
+        margin: auto;
+        .productsItem {
+          display: -webkit-box;
+          display: -moz-box;
+          display: -webkit-flexbox;
+          display: -moz-flexbox;
+          display: -ms-flexbox;
+          display: -webkit-flex;
+          display: -moz-flex;
+          display: flex;
+          width: 100%;
+          border-top: 1px solid #000;
+          border-left: 1px solid #000;
+          border-right: 1px solid #000;
+          &.is-hidden {
+            dl {
+              background-color: grey;
+              dt {
+                //display: none;
+              }
+              dd {
+              }
+            }
+          }
+          &:last-child {
+            border-bottom: 1px solid #000;
+          }
+          &:not(:first-child) {
+            dl {
+              dt {
+                display: none;
+              }
+              dd {
+
+              }
+            }
+          }
+          dl {
+            width: 25%;
+            //border-top: 1px solid #000;
+            //border-left: 1px solid #000;
+            //border-bottom: 1px solid #000;
+            border-right: 1px solid #000;
+            &:last-child {
+              border-right: 1px solid #000;
+            }
+            dt {
+              background-color: #fff;
+              padding: 10px;
+              border-bottom: 1px solid #000;
+            }
+            dd {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              & {
+                .thumbnail {
+                  display: block;
+                  overflow: hidden;
+                  position: relative;
+                  width: 200px;
+                  height: 200px;
+                  max-width: 200px;
+                  max-height: 200px;
+                  margin: auto;
+                  text-align: center;
+                  img {
+                    height: auto;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    -ms-transform: translate(-50%, -50%);
+                    transform: translate(-50%, -50%);
+                  }
+                }
+              }
+            }
+          }
+
+        }
+      }
+
+    }
+  }
+}
+

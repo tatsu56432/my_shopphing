@@ -21,7 +21,7 @@ gulp.task( 'sass', function() {
             autoprefixer: {
                 browsers: ['last 4 versions']
             },
-            minifier: false // minify無効gu
+            minifier: false // minify無効
         }))
         .pipe(gulp.dest(sass_dest));
 });

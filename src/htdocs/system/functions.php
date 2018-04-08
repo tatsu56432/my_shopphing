@@ -57,6 +57,8 @@ function register_user($pdo,$data){
         $login_name = $data['login_name'];
         $password = $data['password'];
         $salt_password = password_hash($password,PASSWORD_DEFAULT);
+//        $created_at = NULL;
+//        $updated_at = NULL;
         $statement = $pdo->query("SET NAMES utf8;");
         $statement = $pdo->prepare('SELECT user_name FROM user WHERE user_name = ?');
         $statement->execute(array($login_name));
@@ -67,10 +69,12 @@ function register_user($pdo,$data){
         }else{
             if (is_array($data)) {
                 $statement = $pdo->query("SET NAMES utf8;");
-                $statement = $pdo->prepare("INSERT INTO user (id , user_name , password) VALUES (:id , :user_name , :password)");
+                $statement = $pdo->prepare("INSERT INTO user (id , user_name , password , created_at , updated_at) VALUES (:id , :user_name , :password ,:created_at , :updated_at)");
                 $statement->bindValue(':id', $id, PDO::PARAM_INT);
                 $statement->bindParam(':user_name', $login_name, PDO::PARAM_STR);
                 $statement->bindParam(':password', $salt_password, PDO::PARAM_STR);
+                $statement->bindValue(':created_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+                $statement->bindValue(':updated_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
                 $statement->execute();
                 $pdo->commit();
 
@@ -102,6 +106,7 @@ function check_login_user($pdo,$data){
             $statement = $pdo->prepare('SELECT password FROM user WHERE user_name = :login_name');
             $statement->execute(array($login_name));
             $result = $statement->fetch(PDO::FETCH_COLUMN);
+            $pdo->commit();
 //            $password_flag = password_verify($password ,$result);
 //            var_dump($password,$result,$password_flag);
             if(password_verify($password ,$result)){
