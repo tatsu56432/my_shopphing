@@ -233,10 +233,8 @@ function get_db_data($pdo)
 //table 個別商品用tableと在庫管理用のtableへのデータ挿入処理
 function insert_product_data($pdo, $product_data, $stock)
 {
-
-    //エラーにデータの挿入ができなくなる。。
-    //$pdo->beginTransaction();
-    //PHP Fatal error:  Uncaught exception 'PDOException' with message 'There is already an active transaction'
+    
+    $pdo->beginTransaction();
     try{
         if (is_array($product_data)) {
             $id = NULL;
@@ -442,7 +440,7 @@ function display_productItem_admin($data, $id_vars = NULL, $name_vars = NULL, $p
                 </dl>
                 <dl>
                     <dt>価格</dt>
-                    <dd><p>{$price_vars[$i]}</p></dd>
+                    <dd><p>{$price_vars[$i]}円</p></dd>
                 </dl>
                 <dl>
                     <dt>在庫数</dt>
