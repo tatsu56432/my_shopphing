@@ -4,8 +4,6 @@ session_regenerate_id(TRUE);
 
 require_once 'system/functions.php';
 
-//$data['visited'] = isset($_SESSION['visited']) ? $_SESSION['visited']: NULL;
-
 $pdo = get_db_connect();
 $_POST = escape($_POST);
 $submit_login = isset($_POST['submit_login']) ? $_POST['submit_login'] : NULL ;

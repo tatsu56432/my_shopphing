@@ -6,7 +6,7 @@ define("HOST","localhost");
 define("DB_USER_NAME","root");
 define("DB_PASS","password");
 
-//ulr_template
+//url_template
 define("TOP_PAGE" , "index.php");
 define("LOGIN_PAGE" , "login.php");
 define("ADMIN_PAGE" , "/admin/index.php");

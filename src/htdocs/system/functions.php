@@ -23,13 +23,6 @@ function view($template, $data)
     return $view;
 }
 
-function check_user_data($pdo, $data)
-{
-
-
-}
-
-
 function get_db_connect()
 {
     $dsn = 'mysql:dbname=' . DB_NAME . ';host=' . HOST . '';
@@ -47,10 +40,9 @@ function get_db_connect()
     return $pdo;
 }
 
-
+//user登録処理　パスワードはハッシュ化する
 function register_user($pdo, $data)
 {
-
 
     $pdo->beginTransaction();
 
@@ -95,7 +87,7 @@ function register_user($pdo, $data)
 
 }
 
-
+//login画面でloginできるユーザーかどうかをチェック
 function check_login_user($pdo, $data)
 {
 
@@ -110,8 +102,6 @@ function check_login_user($pdo, $data)
             $statement->execute(array($login_name));
             $result = $statement->fetch(PDO::FETCH_COLUMN);
             $pdo->commit();
-//            $password_flag = password_verify($password ,$result);
-//            var_dump($password,$result,$password_flag);
             if (password_verify($password, $result)) {
                 return true;
             } else {
@@ -151,22 +141,6 @@ function validate_ID_PASS($input = null)
     return $error;
 
 }
-
-function check_csrf()
-{
-    //csrf対策
-    if (isset($_SESSION['token'], $_POST['ticket'])) {
-        $ticket = $_POST['ticket'];
-        if ($ticket !== $_SESSION['ticket']) {
-            header('Location:' . TOP_PAGE);
-            exit;
-        }
-    } else {
-        header('Location:' . TOP_PAGE);
-        exit;
-    }
-}
-
 
 //画像リネーム処理
 function rename_img($img_array = array(), $img = array())
@@ -208,28 +182,7 @@ function upload_img($uploaded_img_object = array())
 }
 
 
-//table drink_infoの行の取得処理
-function get_db_data($pdo)
-{
-    $data = array();
-    $statement = $pdo->query("SET NAMES utf8;");
-    $statement = $pdo->query("SELECT * FROM drink_info");
-    while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-        $data[] = array(
-            'id' => $row["id"],
-            'drink_name' => $row["drink_name"],
-            'drink_price' => $row["drink_price"],
-            'drink_img_path' => $row["drink_img_path"],
-            'created_at' => $row["created_at"],
-            'updated_at' => $row["updated_at"],
-            'status' => $row["status"]
-        );
-    }
-    return $data;
-}
-
-
-//table 個別商品用tableと在庫管理用のtableへのデータ挿入処理
+//個別商品用tableと在庫管理用のtableへのデータ挿入処理　admin用の管理画面で使用する
 function insert_product_data($pdo, $product_data, $stock)
 {
 
@@ -311,7 +264,7 @@ function update_stock($pdo, $update_data)
 
 }
 
-
+//カートに入れるボタンを押したらstockテーブルにカートに入れられた商品をinertする処理、すでにそのユーザーがその商品をカートに入れていたらinertではなくupdateする。
 function insert_or_update_cart($pdo, $data)
 {
     $pdo->beginTransaction();
@@ -370,7 +323,7 @@ function insert_or_update_cart($pdo, $data)
             $pdo->commit();
 
         } else {
-            return "データの受け私に失敗しました。";
+            return "データの受け渡しに失敗しました。";
         }
     } catch (PDOException $e) {
         $pdo->rollback();
@@ -396,6 +349,7 @@ function update_inventory_control_by_purchase($pdo, $update_product_id)
     }
 }
 
+//商品の公開非公開設定を変更する処理、ステータス用columnの値を0と1で逆にする。
 function update_product_info($pdo, $update_data)
 {
 
@@ -422,10 +376,10 @@ function update_product_info($pdo, $update_data)
         throw $e;
     }
 
-
 }
 
 
+//管理画面の商品一覧ページで使う商品一覧の情報を取得する
 function get_product_info($pdo)
 {
 
@@ -448,6 +402,7 @@ function get_product_info($pdo)
             );
         }
         return $data;
+        $pdo->commit();
 
     } catch (PDOException $e) {
         $pdo->rollback();
@@ -456,7 +411,9 @@ function get_product_info($pdo)
 
 }
 
-function get_cart_info($pdo, $post_name)
+
+//cartテーブルから各ユーザーがカートに入れた商品ID(item_id)を取得する。
+function get_itemId_from_cart($pdo, $post_name)
 {
     $pdo->beginTransaction();
 
@@ -475,36 +432,22 @@ function get_cart_info($pdo, $post_name)
         }
 
 
-        $statement = $pdo->prepare('SELECT id,item_id FROM cart WHERE user_id = ?');
+        $statement = $pdo->prepare('SELECT item_id FROM cart WHERE user_id = ?');
         $statement->execute(array($user_id));
         while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-            $data[]  = array(
+            $data[] = array(
                 'item_id' => $row["item_id"]
             );
         }
 
-        //var_dump($data);
         $product_id = array();
-        foreach ($data as $val){
-            foreach ($val as $item_id){
-                array_push($product_id,$item_id);
+        foreach ($data as $val) {
+            foreach ($val as $item_id) {
+                array_push($product_id, $item_id);
             }
         }
 
         return $product_id;
-
-//        $statement = $pdo->prepare('SELECT item.*,cart.amount FROM item INNER JOIN cart ON item.user_id = cart.user_id');
-//        $statement->execute(array($user_idse));
-//        while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-//            $data[] = array(
-//                'id' => $row["id"],
-//                'user_id' => $row["user_id"],
-//                'item_id' => $row["item_id"],
-//                'amount' => $row["amount"],
-//                'created_at' => $row["created_at"],
-//                'updated_at' => $row["updated_at"],
-//            );
-//        }
 
         $pdo->commit();
 
@@ -514,11 +457,12 @@ function get_cart_info($pdo, $post_name)
     }
 }
 
-
-function get_id_from_stock($pdo,$data){
+//stockテーブルから各ユーザーのカートに入れた商品IDを取得(item_idではなく商品IDそのものを取得)
+function get_productId_from_stock($pdo, $data)
+{
     $statement = $pdo->query("SET NAMES utf8;");
     $result = array();
-    foreach ($data as $val){
+    foreach ($data as $val) {
         $statement = $pdo->prepare('SELECT id FROM stock WHERE item_id = ?');
         $statement->execute(array($val));
         $result[] = $statement->fetch(PDO::FETCH_ASSOC);
@@ -526,62 +470,44 @@ function get_id_from_stock($pdo,$data){
     return $result;
 }
 
-function get_cart_item_info($pdo ,$product_id_vars,$user_name){
 
-    $result = array();
-
-    $statement = $pdo->query("SET NAMES utf8;");
-    $statement = $pdo->prepare('SELECT id FROM user WHERE user_name = ?');
-    $statement->execute(array($user_name));
-    $result = $statement->fetch(PDO::FETCH_COLUMN);
-    if($result !== false){
-        $user_id = $result;
-    }else{
-        return "ユーザーIDの取得に失敗しました。";
-    }
-
-    foreach ($product_id_vars as $val){
-        $statement = $pdo->prepare('SELECT item.*,cart.amount FROM item INNER JOIN cart ON item.user_id = cart.user_id');
-        $statement->execute(array($user_id));
-        while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-            $data[] = array(
-                'id' => $row["id"],
-                'user_id' => $row["user_id"],
-                'item_id' => $row["item_id"],
-                'amount' => $row["amount"],
-                'created_at' => $row["created_at"],
-                'updated_at' => $row["updated_at"],
-            );
-        }
-
-
-    }
-
-}
-
-function get_product_purchased($pdo, $post_name)
+// get_productID_from_stockで取得した各ユーザーがカートに入れている商品IDを使って、カート表示に必要な情報を取得
+function get_cart_item_info($pdo, $product_id)
 {
+
     $data = array();
-//    $id = $post_id;
-//    $id = intval($id);
+
+//    $statement = $pdo->prepare('SELECT id FROM user WHERE user_name = ?');
+//    $statement->execute(array($user_name));
+//    $result = $statement->fetch(PDO::FETCH_COLUMN);
+//    if ($result !== false) {
+//        $user_id = $result;
+//    } else {
+//        return "ユーザーIDの取得に失敗しました。";
+//    }
 
 
-    $statement = $pdo->prepare('SELECT * FROM drink_info WHERE id = ?');
+//        $statement = $pdo->prepare('SELECT item.*,cart.amount FROM item INNER JOIN cart ON item.user_id = cart.user_id');
+    $statement = $pdo->query("SET NAMES utf8;");
+    $statement = $pdo->prepare('SELECT * FROM item WHERE id = :id');
+    $statement->execute(array($product_id));
     while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-        //idに一致した1件の商品のみ返ってくることを想定するので、多次元配列にはしない。
         $data = array(
             'id' => $row["id"],
-            'drink_name' => $row["drink_name"],
-            'drink_price' => $row["drink_price"],
-            'drink_img_path' => $row["drink_img_path"],
+            'name' => $row["name"],
+            'price' => $row["price"],
+            'img' => $row["img"],
             'created_at' => $row["created_at"],
             'updated_at' => $row["updated_at"],
-            'status' => $row["status"],
-            'num_of_stock' => $row["num_of_stock"]
         );
     }
+
     return $data;
+
 }
+
+
+
 
 //取得した商品一覧の多次元配列から目当てのcolumnの値を取得
 function get_target_column($data, $target)
@@ -604,9 +530,6 @@ function get_target_column($data, $target)
 function display_cart_item($data, $id_vars = NULL, $name_vars = NULL, $price_vars = NULL, $drink_img_path_vars = NULL, $status_vars = NULL)
 {
     $i = 0;
-
-
-
 
 
 }
@@ -795,17 +718,4 @@ function validation_stock($input = NULL)
 
     return $error;
 
-}
-
-
-//商品のidを使って商品の値段をtableから取得する 下記のインデックスページのvalidationで利用
-function get_product_price($pdo, $product_id)
-{
-    $id = $product_id;
-    $id = intval($id);
-    $statement = $pdo->query("SET NAMES utf8;");
-    $statement = $pdo->prepare('SELECT drink_price FROM drink_info WHERE id = ?');
-    $statement->execute(array($id));
-    $result = $statement->fetch(PDO::FETCH_ASSOC);
-    return $result;
 }

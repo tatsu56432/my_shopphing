@@ -3,13 +3,21 @@ require_once 'system/define.php';
 require_once 'system/functions.php';
 $pdo = get_db_connect();
 
+$item_id = array();
+$item_id = get_itemId_from_cart($pdo,$user_name);
 
-$cart_info = array();
-$cart_info = get_cart_info($pdo,$user_name);
-//var_dump($cart_info);
-$stock_id = get_id_from_stock($pdo,$cart_info);
+$product_id = get_productId_from_stock($pdo,$item_id);
 
-get_cart_item_info($pdo,$stock_id,$user_name)
+
+$cart_list_info = array();
+foreach ($product_id as $num){
+    foreach ($num as $id){
+        array_push($cart_list_info ,get_cart_item_info($pdo,$id));
+    }
+}
+
+var_dump($cart_list_info);
+
 
 ?>
 <!doctype html>
