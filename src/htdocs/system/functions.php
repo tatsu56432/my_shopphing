@@ -350,12 +350,13 @@ function insert_or_update_cart($pdo, $data)
             $statement = $pdo->prepare('SELECT * FROM cart WHERE user_id = ? and item_id = ?');
             $statement->execute(array($user_id,$item_id));
             $result = $statement->fetch(PDO::FETCH_ASSOC);
+            var_dump($result);
             if ($result !== false) {
-                $statement = $pdo->prepare('UPDATE cart SET amount = amount + 1 and updated_at = :updated_at WHERE user_id = :user_id and item_id = :item_id');
+                $statement = $pdo->prepare('UPDATE cart SET amount = amount+1,updated_at = :updated_at WHERE user_id = :user_id and item_id = :item_id');
                 $statement->bindValue(':updated_at',date("Y-m-d H:i:s"),PDO::PARAM_STR);
                 $statement->bindParam(':user_id',$user_id,PDO::PARAM_INT);
                 $statement->bindParam(':item_id',$item_id,PDO::PARAM_INT);
-                $pdo->commit();
+                $statement->execute();
             } else {
                 $statement = $pdo->prepare("INSERT INTO cart (id , user_id , item_id , amount , created_at , updated_at) VALUES (:id , :user_id , :item_id , :amount , :created_at , :updated_at )");
                 $statement->bindValue(':id', $id, PDO::PARAM_INT);
@@ -365,8 +366,9 @@ function insert_or_update_cart($pdo, $data)
                 $statement->bindValue(':created_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
                 $statement->bindValue(':updated_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
                 $statement->execute();
-                $pdo->commit();
             }
+
+            $pdo->commit();
 
         } else {
             return "データの受け私に失敗しました。";
