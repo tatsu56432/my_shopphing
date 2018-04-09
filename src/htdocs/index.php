@@ -23,14 +23,12 @@ $login_name = isset($_SESSION['login_name']) ? $_SESSION['login_name'] : NULL;
 
 if($purchase_btn){
 
-    var_dump($_SESSION['login_name']);
-
     $post_data=array(
         'login_name'=>$login_name,
         'product_id'=>$purchase_btn
     );
 
-    insert_cart($pdo,$post_data);
+    insert_or_update_cart($pdo,$post_data);
 
 
 }

@@ -1,3 +1,9 @@
+<?php
+require_once 'system/define.php';
+require_once 'system/functions.php';
+$pdo = get_db_connect();
+$products_info = get_product_info($pdo);
+?>
 <!doctype html>
 <html lang="ja">
 <head>
@@ -133,7 +139,9 @@
             </li>
         </ul>
 
-        <div></div>
+        <div class="purchaseBlock">
+            <button type="submit" class="" name="">購入する</button>
+        </div>
 
 
     </div>

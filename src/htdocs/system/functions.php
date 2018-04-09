@@ -3,8 +3,9 @@
 require_once 'define.php';
 
 
-function check_login () {
-    if(!isset($_SESSION['login_name'])){
+function check_login()
+{
+    if (!isset($_SESSION['login_name'])) {
         header('location:' . LOGIN_PAGE);
         exit;
     }
@@ -22,8 +23,8 @@ function view($template, $data)
     return $view;
 }
 
-function check_user_data($pdo,$data){
-
+function check_user_data($pdo, $data)
+{
 
 
 }
@@ -47,26 +48,25 @@ function get_db_connect()
 }
 
 
-function register_user($pdo,$data){
+function register_user($pdo, $data)
+{
 
 
     $pdo->beginTransaction();
 
-    try{
+    try {
         $id = NULL;
         $login_name = $data['login_name'];
         $password = $data['password'];
-        $salt_password = password_hash($password,PASSWORD_DEFAULT);
-//        $created_at = NULL;
-//        $updated_at = NULL;
+        $salt_password = password_hash($password, PASSWORD_DEFAULT);
         $statement = $pdo->query("SET NAMES utf8;");
         $statement = $pdo->prepare('SELECT user_name FROM user WHERE user_name = ?');
         $statement->execute(array($login_name));
         $result = $statement->fetch(PDO::FETCH_ASSOC);
-        if($result !== false){
-            $result_comment =  "ユーザー名が既にに使用されています。";
+        if ($result !== false) {
+            $result_comment = "ユーザー名が既にに使用されています。";
             return $result_comment;
-        }else{
+        } else {
             if (is_array($data)) {
                 $statement = $pdo->query("SET NAMES utf8;");
                 $statement = $pdo->prepare("INSERT INTO user (id , user_name , password , created_at , updated_at) VALUES (:id , :user_name , :password ,:created_at , :updated_at)");
@@ -79,30 +79,30 @@ function register_user($pdo,$data){
 
                 $pdo->commit();
 
-                $result_comment =  "登録しました。";
+                $result_comment = "登録しました。";
                 return $result_comment;
             } else {
-                $result_comment =  'データの挿入に失敗しました。';
+                $result_comment = 'データの挿入に失敗しました。';
                 return $result_comment;
 
             }
         }
-    }catch (PDOException $e){
+    } catch (PDOException $e) {
         $pdo->rollback();
         throw $e;
     }
 
 
-
 }
 
 
-function check_login_user($pdo,$data){
+function check_login_user($pdo, $data)
+{
 
     $pdo->beginTransaction();
 
-    try{
-        if(is_array($data)){
+    try {
+        if (is_array($data)) {
             $login_name = $data['login_name'];
             $password = $data['password'];
             $statement = $pdo->query("SET NAMES utf8;");
@@ -112,16 +112,16 @@ function check_login_user($pdo,$data){
             $pdo->commit();
 //            $password_flag = password_verify($password ,$result);
 //            var_dump($password,$result,$password_flag);
-            if(password_verify($password ,$result)){
+            if (password_verify($password, $result)) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
-        }else{
+        } else {
             echo "データの受け渡しに失敗しました。";
         }
-    }catch (PDOException $e){
-        $pdo -> roolback();
+    } catch (PDOException $e) {
+        $pdo->roolback();
         throw $e;
     }
 
@@ -129,9 +129,10 @@ function check_login_user($pdo,$data){
 }
 
 
-function validate_ID_PASS($input = null){
+function validate_ID_PASS($input = null)
+{
 
-    if(!$input){
+    if (!$input) {
         $input = $_POST;
     }
 
@@ -140,11 +141,11 @@ function validate_ID_PASS($input = null){
 
     $error = array();
 
-    if(empty($login_user)){
+    if (empty($login_user)) {
         $error['login_name'] = "ユーザー名を入力してください。";
     }
 
-    if(empty($password)){
+    if (empty($password)) {
         $error['password'] = "パスワードを入力してください。";
     }
     return $error;
@@ -154,19 +155,17 @@ function validate_ID_PASS($input = null){
 function check_csrf()
 {
     //csrf対策
-    if(isset($_SESSION['token'] , $_POST['ticket'])){
+    if (isset($_SESSION['token'], $_POST['ticket'])) {
         $ticket = $_POST['ticket'];
-        if($ticket !== $_SESSION['ticket']){
-            header('Location:'.TOP_PAGE);
+        if ($ticket !== $_SESSION['ticket']) {
+            header('Location:' . TOP_PAGE);
             exit;
         }
-    }else{
-        header('Location:'.TOP_PAGE);
+    } else {
+        header('Location:' . TOP_PAGE);
         exit;
     }
 }
-
-
 
 
 //画像リネーム処理
@@ -235,12 +234,12 @@ function insert_product_data($pdo, $product_data, $stock)
 {
 
     $pdo->beginTransaction();
-    try{
+    try {
         if (is_array($product_data)) {
             $id = NULL;
             $item_id = "";
-            for($i = 0;$i < 6;$i ++){
-                $item_id.=mt_rand(0, 9);
+            for ($i = 0; $i < 6; $i++) {
+                $item_id .= mt_rand(0, 9);
             }
             $name = $product_data['product_name'];
             $price = $product_data['price'];
@@ -274,8 +273,8 @@ function insert_product_data($pdo, $product_data, $stock)
             echo $error;
         }
 
-    }catch (PDOException $e){
-        $pdo -> rollback();
+    } catch (PDOException $e) {
+        $pdo->rollback();
         throw  $e;
     }
 
@@ -287,7 +286,7 @@ function update_stock($pdo, $update_data)
 
     $pdo->beginTransaction();
 
-    try{
+    try {
         if (is_array($update_data)) {
             $id = $update_data['id'];
             $num_of_stock_changed = $update_data['num_of_stock_changed'];
@@ -305,7 +304,7 @@ function update_stock($pdo, $update_data)
             $error = 'データの挿入に失敗しました。';
             echo $error;
         }
-    }catch (PDOException $e){
+    } catch (PDOException $e) {
         $pdo->rollback();
         throw $e;
     }
@@ -313,47 +312,66 @@ function update_stock($pdo, $update_data)
 }
 
 
-function insert_cart($pdo,$data){
+function insert_or_update_cart($pdo, $data)
+{
     $pdo->beginTransaction();
-    try{
-        if(is_array($data)){
-
+    try {
+        if (is_array($data)) {
             $id = NULL;
             $user_name = $data['login_name'];
             $product_id = $data['product_id'];
             $statement = $pdo->query("SET NAMES utf8;");
+            $user_id = NULL;
+            $item_id = NULL;
             $statement = $pdo->prepare('SELECT id FROM user WHERE user_name = ?');
             $statement->execute(array($user_name));
             $result = $statement->fetch(PDO::FETCH_COLUMN);
-            if($result !== false){
+            if ($result !== false) {
                 $user_id = $result;
-            }else{
+            } else {
                 return "ユーザーIDの取得に失敗しました。";
             }
+
 
             $statement = $pdo->prepare('SELECT item_id FROM stock WHERE id = ?');
             $statement->execute(array($product_id));
             $result = $statement->fetch(PDO::FETCH_COLUMN);
-            if($result !== false){
+            if ($result !== false) {
                 $item_id = $result;
-            }else{
+            } else {
                 return "item_IDの取得に失敗しました。";
             }
 
-            $statement = $pdo->prepare("INSERT INTO cart (id , user_id , item_id , amount , created_at , updated_at) VALUES (:id , :user_id , :item_id , :amount , :created_at , :updated_at )");
-            $statement->bindValue(':id', $id, PDO::PARAM_INT);
-            $statement->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-            $statement->bindParam(':item_id', $item_id, PDO::PARAM_INT);
-            $statement->bindValue(':amount', 1, PDO::PARAM_INT);
-            $statement->bindValue(':created_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
-            $statement->bindValue(':updated_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
-            $statement->execute();
-            $pdo->commit();
+            //Fatal error call to undifined functionになった。。 なぜかわかってない
+//            $statement = $pdo->prepare('SELECT * FROM cart WHERE user_id = :user_id and item_id = :item_id');
+//            $statement = bindParam(':user_id', $user_id, PDO::PARAM_INT);
+//            $statement = bindParam(':item_id', $item_id, PDO::PARAM_INT);
 
-        }else{
-            return "error";
+            $statement = $pdo->prepare('SELECT * FROM cart WHERE user_id = ? and item_id = ?');
+            $statement->execute(array($user_id,$item_id));
+            $result = $statement->fetch(PDO::FETCH_ASSOC);
+            if ($result !== false) {
+                $statement = $pdo->prepare('UPDATE cart SET amount = amount + 1 and updated_at = :updated_at WHERE user_id = :user_id and item_id = :item_id');
+                $statement->bindValue(':updated_at',date("Y-m-d H:i:s"),PDO::PARAM_STR);
+                $statement->bindParam(':user_id',$user_id,PDO::PARAM_INT);
+                $statement->bindParam(':item_id',$item_id,PDO::PARAM_INT);
+                $pdo->commit();
+            } else {
+                $statement = $pdo->prepare("INSERT INTO cart (id , user_id , item_id , amount , created_at , updated_at) VALUES (:id , :user_id , :item_id , :amount , :created_at , :updated_at )");
+                $statement->bindValue(':id', $id, PDO::PARAM_INT);
+                $statement->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+                $statement->bindParam(':item_id', $item_id, PDO::PARAM_INT);
+                $statement->bindValue(':amount', 1, PDO::PARAM_INT);
+                $statement->bindValue(':created_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+                $statement->bindValue(':updated_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+                $statement->execute();
+                $pdo->commit();
+            }
+
+        } else {
+            return "データの受け私に失敗しました。";
         }
-    }catch (PDOException $e){
+    } catch (PDOException $e) {
         $pdo->rollback();
         throw $e;
     }
@@ -380,9 +398,9 @@ function update_inventory_control_by_purchase($pdo, $update_product_id)
 function update_product_info($pdo, $update_data)
 {
 
-    $pdo -> beginTransaction();
+    $pdo->beginTransaction();
 
-    try{
+    try {
         if (is_array($update_data)) {
             $id = $update_data['id'];
             $status_reverse_value = $update_data['status_reverse_value'];
@@ -393,13 +411,13 @@ function update_product_info($pdo, $update_data)
             $statement->bindValue(':status_reverse_value', $status_reverse_value, PDO::PARAM_INT);
             $statement->bindValue(':updated_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
             $statement->execute();
-            $pdo -> commit();
+            $pdo->commit();
         } else {
             $error = 'データの更新に失敗しました。';
             echo $error;
         }
-    }catch (PDOException $e){
-        $pdo -> rollback();
+    } catch (PDOException $e) {
+        $pdo->rollback();
         throw $e;
     }
 
@@ -411,7 +429,7 @@ function get_product_info($pdo)
 {
 
     $pdo->beginTransaction();
-    try{
+    try {
         $data = array();
         $statement = $pdo->query("SET NAMES utf8;");
         //tableの内部結合
@@ -430,22 +448,59 @@ function get_product_info($pdo)
         }
         return $data;
 
-    }catch (PDOException $e){
+    } catch (PDOException $e) {
         $pdo->rollback();
         throw $e;
     }
 
 }
 
-function get_product_purchased($pdo,$post_id)
+function get_cart_info($pdo, $post_name)
+{
+    $pdo->beginTransaction();
+
+    try {
+        $user_name = $post_name;
+        $statement = $pdo->query("SET NAMES utf8;");
+        $statement = $pdo->prepare('SELECT id FROM user where user_name = ?');
+        $statement->execute(array($user_name));
+        $result = $statement->fetch(PDO::FETCH_COLUMN);
+        $data = array();
+        if ($result !== false) {
+            $user_id = $result;
+        } else {
+            return "ユーザーIDの取得に失敗しました。";
+        }
+        $statement = $pdo->prepare('SELECT * FROM cart WHERE user_id = ?');
+        $statement->execute(array($user_id));
+        while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+            $data[] = array(
+                'id' => $row["id"],
+                'user_id' => $row["user_id"],
+                'item_id' => $row["item_id"],
+                'amount' => $row["amount"],
+                'created_at' => $row["created_at"],
+                'updated_at' => $row["updated_at"],
+            );
+        }
+        $pdo->commit();
+        return $data;
+    } catch (PDOException $e) {
+        $pdo->rollback();
+        throw $e;
+    }
+}
+
+
+function get_product_purchased($pdo, $post_name)
 {
     $data = array();
-    $id = $post_id;
-    $id = intval($id);
-    $statement = $pdo->query("SET NAMES utf8;");
+//    $id = $post_id;
+//    $id = intval($id);
+
+
     $statement = $pdo->prepare('SELECT * FROM drink_info WHERE id = ?');
-    $statement->execute(array($id));
-    while ($row = $statement->fetch(PDO::FETCH_ASSOC)){
+    while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
         //idに一致した1件の商品のみ返ってくることを想定するので、多次元配列にはしない。
         $data = array(
             'id' => $row["id"],
@@ -461,7 +516,7 @@ function get_product_purchased($pdo,$post_id)
     return $data;
 }
 
-//get_drink_infoで取得した商品一覧の多次元配列から目当てのcolumnの値を取得
+//取得した商品一覧の多次元配列から目当てのcolumnの値を取得
 function get_target_column($data, $target)
 {
     if (isset($data) && is_array($data)) {
@@ -477,6 +532,12 @@ function get_target_column($data, $target)
     } elseif (empty($data)) {
         echo "データがありません";
     }
+}
+
+function display_cart_item($data, $id_vars = NULL, $name_vars = NULL, $price_vars = NULL, $drink_img_path_vars = NULL, $status_vars = NULL)
+{
+
+
 }
 
 //adminページ商品一覧出力用関数
@@ -580,8 +641,6 @@ HTML;
 }
 
 
-
-
 //データのエスケープ処理　//渡されたデータが配列なら再起処理で個々の値エスケープする。
 function escape($vars)
 {
@@ -633,7 +692,7 @@ function validate_admin_post_product($input = null)
     if (empty($image)) {
         $error['image'] = '画像を入力してください';
     }
-    if (!in_array($image, $extension_array)){
+    if (!in_array($image, $extension_array)) {
         $error['image'] = '画像はpngかjpegを使用してください';
     }
 
@@ -646,7 +705,8 @@ function validate_admin_post_product($input = null)
 }
 
 //在庫数変更用formのバリデーション処理
-function validation_stock($input = NULL){
+function validation_stock($input = NULL)
+{
 
     if (!$input) {
         $input = $_POST;
@@ -655,10 +715,10 @@ function validation_stock($input = NULL){
     $stock = isset($input['num_of_stock_changed']) ? $input['num_of_stock_changed'] : NULL;
     $error = array();
 
-    if(!isset($stock)){
+    if (!isset($stock)) {
         $error['stock'] = "在庫数を変更するには半角数字を入力してください。";
     }
-    if(!preg_match("/^[0-9]+$/",$stock)){
+    if (!preg_match("/^[0-9]+$/", $stock)) {
         $error['stock'] = "文字列は入力しないでください。";
     }
 
