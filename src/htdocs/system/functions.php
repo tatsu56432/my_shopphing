@@ -348,14 +348,13 @@ function insert_or_update_cart($pdo, $data)
 //            $statement = bindParam(':item_id', $item_id, PDO::PARAM_INT);
 
             $statement = $pdo->prepare('SELECT * FROM cart WHERE user_id = ? and item_id = ?');
-            $statement->execute(array($user_id,$item_id));
+            $statement->execute(array($user_id, $item_id));
             $result = $statement->fetch(PDO::FETCH_ASSOC);
-            var_dump($result);
             if ($result !== false) {
                 $statement = $pdo->prepare('UPDATE cart SET amount = amount+1,updated_at = :updated_at WHERE user_id = :user_id and item_id = :item_id');
-                $statement->bindValue(':updated_at',date("Y-m-d H:i:s"),PDO::PARAM_STR);
-                $statement->bindParam(':user_id',$user_id,PDO::PARAM_INT);
-                $statement->bindParam(':item_id',$item_id,PDO::PARAM_INT);
+                $statement->bindValue(':updated_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+                $statement->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+                $statement->bindParam(':item_id', $item_id, PDO::PARAM_INT);
                 $statement->execute();
             } else {
                 $statement = $pdo->prepare("INSERT INTO cart (id , user_id , item_id , amount , created_at , updated_at) VALUES (:id , :user_id , :item_id , :amount , :created_at , :updated_at )");
@@ -464,16 +463,85 @@ function get_cart_info($pdo, $post_name)
     try {
         $user_name = $post_name;
         $statement = $pdo->query("SET NAMES utf8;");
-        $statement = $pdo->prepare('SELECT id FROM user where user_name = ?');
+        $statement = $pdo->prepare('SELECT id FROM user WHERE user_name = ?');
         $statement->execute(array($user_name));
         $result = $statement->fetch(PDO::FETCH_COLUMN);
         $data = array();
+
         if ($result !== false) {
             $user_id = $result;
         } else {
             return "ユーザーIDの取得に失敗しました。";
         }
-        $statement = $pdo->prepare('SELECT * FROM cart WHERE user_id = ?');
+
+
+        $statement = $pdo->prepare('SELECT id,item_id FROM cart WHERE user_id = ?');
+        $statement->execute(array($user_id));
+        while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+            $data[]  = array(
+                'item_id' => $row["item_id"]
+            );
+        }
+
+        //var_dump($data);
+        $product_id = array();
+        foreach ($data as $val){
+            foreach ($val as $item_id){
+                array_push($product_id,$item_id);
+            }
+        }
+
+        return $product_id;
+
+//        $statement = $pdo->prepare('SELECT item.*,cart.amount FROM item INNER JOIN cart ON item.user_id = cart.user_id');
+//        $statement->execute(array($user_idse));
+//        while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+//            $data[] = array(
+//                'id' => $row["id"],
+//                'user_id' => $row["user_id"],
+//                'item_id' => $row["item_id"],
+//                'amount' => $row["amount"],
+//                'created_at' => $row["created_at"],
+//                'updated_at' => $row["updated_at"],
+//            );
+//        }
+
+        $pdo->commit();
+
+    } catch (PDOException $e) {
+        $pdo->rollback();
+        throw $e;
+    }
+}
+
+
+function get_id_from_stock($pdo,$data){
+    $statement = $pdo->query("SET NAMES utf8;");
+    $result = array();
+    foreach ($data as $val){
+        $statement = $pdo->prepare('SELECT id FROM stock WHERE item_id = ?');
+        $statement->execute(array($val));
+        $result[] = $statement->fetch(PDO::FETCH_ASSOC);
+    }
+    return $result;
+}
+
+function get_cart_item_info($pdo ,$product_id_vars,$user_name){
+
+    $result = array();
+
+    $statement = $pdo->query("SET NAMES utf8;");
+    $statement = $pdo->prepare('SELECT id FROM user WHERE user_name = ?');
+    $statement->execute(array($user_name));
+    $result = $statement->fetch(PDO::FETCH_COLUMN);
+    if($result !== false){
+        $user_id = $result;
+    }else{
+        return "ユーザーIDの取得に失敗しました。";
+    }
+
+    foreach ($product_id_vars as $val){
+        $statement = $pdo->prepare('SELECT item.*,cart.amount FROM item INNER JOIN cart ON item.user_id = cart.user_id');
         $statement->execute(array($user_id));
         while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
             $data[] = array(
@@ -485,14 +553,11 @@ function get_cart_info($pdo, $post_name)
                 'updated_at' => $row["updated_at"],
             );
         }
-        $pdo->commit();
-        return $data;
-    } catch (PDOException $e) {
-        $pdo->rollback();
-        throw $e;
-    }
-}
 
+
+    }
+
+}
 
 function get_product_purchased($pdo, $post_name)
 {
@@ -538,6 +603,10 @@ function get_target_column($data, $target)
 
 function display_cart_item($data, $id_vars = NULL, $name_vars = NULL, $price_vars = NULL, $drink_img_path_vars = NULL, $status_vars = NULL)
 {
+    $i = 0;
+
+
+
 
 
 }

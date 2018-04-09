@@ -2,7 +2,15 @@
 require_once 'system/define.php';
 require_once 'system/functions.php';
 $pdo = get_db_connect();
-$products_info = get_product_info($pdo);
+
+
+$cart_info = array();
+$cart_info = get_cart_info($pdo,$user_name);
+//var_dump($cart_info);
+$stock_id = get_id_from_stock($pdo,$cart_info);
+
+get_cart_item_info($pdo,$stock_id,$user_name)
+
 ?>
 <!doctype html>
 <html lang="ja">
