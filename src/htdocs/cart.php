@@ -1,8 +1,11 @@
 <?php
-session_start();
-require_once 'system/define.php';
-require_once 'system/functions.php';
-$pdo = get_db_connect();
+require_once  $_SERVER['DOCUMENT_ROOT'] . "/system/init.php";
+
+$login_flag = check_login();
+
+if($login_flag === false){
+    header('location:' . LOGIN_PAGE);
+}
 
 $data = array();
 $user_name = isset($_SESSION['login_name']) ? $_SESSION['login_name']: NULL;

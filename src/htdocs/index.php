@@ -1,14 +1,10 @@
 <?php
-session_start();
-session_regenerate_id(TRUE);
-require 'system/define.php';
-require 'system/functions.php';
-$pdo = get_db_connect();
+require_once  $_SERVER['DOCUMENT_ROOT'] . "/system/init.php";
 
 $login_flag = check_login();
 
 if($login_flag === false){
-    header('location' . LOGIN_PAGE);
+    header('location:' . LOGIN_PAGE);
 }
 
 $_POST = escape($_POST);

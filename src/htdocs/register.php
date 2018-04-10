@@ -1,8 +1,5 @@
 <?php
-session_start();
-session_regenerate_id(TRUE);
-require_once 'system/functions.php';
-$pdo = get_db_connect();
+require_once  $_SERVER['DOCUMENT_ROOT'] . "/system/init.php";
 
 
 $_POST = escape($_POST);

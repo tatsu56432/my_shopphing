@@ -1,10 +1,10 @@
 <?php
-session_start();
-require_once '../system/define.php';
-require_once '../system/functions.php';
-$pdo = get_db_connect();
+require_once  $_SERVER['DOCUMENT_ROOT'] . "/system/init.php";
 
-check_login();
+$login_flag = check_login();
+if($login_flag === false){
+    header('location:' . LOGIN_PAGE);
+}
 
 $product_name = isset($_POST['product_name']) ? $_POST['product_name'] : NULL;
 $price = isset($_POST['price']) ? $_POST['price'] : NULL;

@@ -1,7 +1,10 @@
 <?php
+require_once  $_SERVER['DOCUMENT_ROOT'] . "/system/init.php";
 
-require_once '../system/define.php';
-require_once '../system/functions.php';
+$login_flag = check_login();
+if($login_flag === false){
+    header('location:' . LOGIN_PAGE);
+}
 
 $data = array();
 

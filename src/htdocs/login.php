@@ -1,9 +1,6 @@
 <?php
-session_start();
+require_once  $_SERVER['DOCUMENT_ROOT'] . "/system/init.php";
 
-require_once 'system/functions.php';
-
-$pdo = get_db_connect();
 $_POST = escape($_POST);
 $submit_login = isset($_POST['submit_login']) ? $_POST['submit_login'] : NULL ;
 $data = array();
