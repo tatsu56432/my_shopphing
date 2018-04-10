@@ -1,10 +1,9 @@
 <?php
 session_start();
 session_regenerate_id(TRUE);
-
 require_once 'system/functions.php';
-
 $pdo = get_db_connect();
+
 
 $_POST = escape($_POST);
 $submit_register = isset($_POST['submit_register']) ? $_POST['submit_register'] : NULL;

@@ -5,11 +5,11 @@ require_once 'define.php';
 
 function check_login()
 {
-    if (!isset($_SESSION['login_name'])) {
-        header('location:' . LOGIN_PAGE);
-        exit;
+    if (isset($_SESSION['login_name'])) {
+        return true;
+    }else{
+        return false;
     }
-    return true;
 }
 
 function view($template, $data)

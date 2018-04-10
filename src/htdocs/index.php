@@ -5,7 +5,11 @@ require 'system/define.php';
 require 'system/functions.php';
 $pdo = get_db_connect();
 
-check_login();
+$login_flag = check_login();
+
+if($login_flag === false){
+    header('location' . LOGIN_PAGE);
+}
 
 $_POST = escape($_POST);
 $purchase_btn = isset($_POST['purchase_btn']) ? $_POST['purchase_btn'] : NULL;

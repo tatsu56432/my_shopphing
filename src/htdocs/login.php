@@ -1,6 +1,5 @@
 <?php
 session_start();
-session_regenerate_id(TRUE);
 
 require_once 'system/functions.php';
 

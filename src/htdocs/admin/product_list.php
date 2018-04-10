@@ -4,6 +4,7 @@ require_once '../system/define.php';
 require_once '../system/functions.php';
 $pdo = get_db_connect();
 
+check_login();
 
 $product_name = isset($_POST['product_name']) ? $_POST['product_name'] : NULL;
 $price = isset($_POST['price']) ? $_POST['price'] : NULL;
