@@ -70,7 +70,7 @@ $products_info = get_product_info($pdo);
 
         </div>
 
-        <?php if(isset($success_message)) echo "<p style='text-align: center;color: red;margin-bottom: 30px'>". $success_message ."</p>" ;?>
+        <?php if(isset($success_message)) echo "<p style='text-align: center;color: green;margin-bottom: 30px'>". $success_message ."</p>" ;?>
         <?php if(isset($error['stock'])) echo "<p style='text-align: center;color: red;margin-bottom: 30px'>". $error['stock'] ."</p>" ;?>
         <ul class="productsItems">
 

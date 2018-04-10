@@ -21,8 +21,12 @@ if ($submit_register) {
 //    var_dump($error);
 
     if (count($error) <= 0) {
-        $result_comment = register_user($pdo, $post_data);
-        $data['result_comment'] = $result_comment;
+        $register_result = register_user($pdo, $post_data);
+        if($register_result === true){
+            $data['register_result'] = true;
+        }else{
+            $data['register_result'] = false;
+        }
     } else {
         $data['error'] = $error;
     }

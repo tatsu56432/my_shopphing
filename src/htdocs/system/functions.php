@@ -56,8 +56,7 @@ function register_user($pdo, $data)
         $statement->execute(array($login_name));
         $result = $statement->fetch(PDO::FETCH_ASSOC);
         if ($result !== false) {
-            $result_comment = "ユーザー名が既にに使用されています。";
-            return $result_comment;
+            return false;
         } else {
             if (is_array($data)) {
                 $statement = $pdo->query("SET NAMES utf8;");
@@ -70,13 +69,9 @@ function register_user($pdo, $data)
                 $statement->execute();
 
                 $pdo->commit();
-
-                $result_comment = "登録しました。";
-                return $result_comment;
+                return true;
             } else {
-                $result_comment = 'データの挿入に失敗しました。';
-                return $result_comment;
-
+                return 'データが受け渡しに失敗しました。';
             }
         }
     } catch (PDOException $e) {
@@ -233,7 +228,7 @@ function insert_product_data($pdo, $product_data, $stock)
 
 }
 
-//在庫数の変更に伴う在庫管理テーブル更新用の処理
+//在庫数の変更に伴う在庫管理テーブル更新用の処理 商品管理ページで使用
 function update_stock($pdo, $update_data)
 {
 
@@ -336,6 +331,8 @@ function insert_or_update_cart($pdo, $data)
 //購入による、在庫管理数のアップデート処理
 function update_inventory_control_by_purchase($pdo, $update_product_id)
 {
+
+
     if (isset($update_product_id)) {
         $id = $update_product_id;
         $statement = $pdo->query("SET NAMES utf8;");
