@@ -468,25 +468,14 @@ function get_productId_from_stock($pdo, $data)
 }
 
 
-// get_productID_from_stockで取得した各ユーザーがカートに入れている商品IDを使って、カート表示に必要な情報を取得
+// get_productID_from_stockで取得した各ユーザーがカートに入れている商品IDを使って、カート表示する商品情報を取得する。
 function get_cart_item_info($pdo, $product_id)
 {
 
     $data = array();
-
-//    $statement = $pdo->prepare('SELECT id FROM user WHERE user_name = ?');
-//    $statement->execute(array($user_name));
-//    $result = $statement->fetch(PDO::FETCH_COLUMN);
-//    if ($result !== false) {
-//        $user_id = $result;
-//    } else {
-//        return "ユーザーIDの取得に失敗しました。";
-//    }
-
-
-//        $statement = $pdo->prepare('SELECT item.*,cart.amount FROM item INNER JOIN cart ON item.user_id = cart.user_id');
     $statement = $pdo->query("SET NAMES utf8;");
-    $statement = $pdo->prepare('SELECT * FROM item WHERE id = :id');
+    //3つのテーブルを内部結合して、カート表示に必要な商品IDに一致したものを取得する
+    $statement = $pdo->prepare('SELECT item.*,stock.stock,cart.amount FROM item INNER JOIN stock ON item.id = stock.id INNER JOIN cart ON stock.item_id = cart.item_id where item.id = :id');
     $statement->execute(array($product_id));
     while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
         $data = array(
@@ -494,16 +483,15 @@ function get_cart_item_info($pdo, $product_id)
             'name' => $row["name"],
             'price' => $row["price"],
             'img' => $row["img"],
+            'status' => $row["status"],
             'created_at' => $row["created_at"],
             'updated_at' => $row["updated_at"],
+            'stock' => $row["stock"],
+            'amount' => $row["amount"],
         );
     }
-
     return $data;
-
 }
-
-
 
 
 //取得した商品一覧の多次元配列から目当てのcolumnの値を取得
@@ -524,10 +512,63 @@ function get_target_column($data, $target)
     }
 }
 
-function display_cart_item($data, $id_vars = NULL, $name_vars = NULL, $price_vars = NULL, $drink_img_path_vars = NULL, $status_vars = NULL)
+//ユーザーがカートに入れた商品の一覧を表示する。カートitemの中での購入数変更用selectboxはそのユーザーがカートに入れた数量をデフォルトで表示させる。
+function display_cart_item($cart_list_info)
 {
     $i = 0;
+    $option_tag_max_num = 10;
 
+    foreach ($cart_list_info as $key => $val){
+        $amount_num[$i] = $cart_list_info[$i]['amount'];
+        $option_tag = array();
+        for ($option_count=1; $option_count<$option_tag_max_num ; $option_count++){
+            if($option_count === $amount_num[$i]){
+                $option_tag.= "<option value=\"$option_count\" selected>$option_count</option>";
+                continue;
+            }
+            $option_tag.= "<option value=\"$option_count\">$option_count</option>";
+        }
+
+        $html=<<<HTML
+                    <li class="cartItem">
+                <div class="cartItem__inner">
+                    <p class="thumbnail"><img src="{$cart_list_info[$i]['img']}" alt=""></p>
+                    <dl class="product--name">
+                       <dt>商品名</dt>
+                       <dd>
+                           <p>{$cart_list_info[$i]['name']}</p>
+                       </dd>
+                    </dl>
+                    <dl class="product--price">
+                        <dt>値段</dt>
+                        <dd>
+                            <p>{$cart_list_info[$i]['price']}円</p>
+                        </dd>
+                    </dl>
+                    <dl class="product--amount">
+                        <dt>購入数</dt>
+                        <dd>
+                            <div>
+                            <form action="" method="post">
+                                <select name="product--amount" id="product--amount">
+                                {$option_tag}
+                                </select>
+                                <button type="submit" name="amount_change" class="amount_change_btn">数量を変更</button>
+                            </form>
+                            </div>
+                        </dd>
+                    </dl>
+                    <div class="product--delete">
+                        <form action="" method="post">
+                            <button type="submit" class="product_change_btn" name="product_change">削除する</button>
+                        </form>
+                    </div>
+                </div>
+            </li>
+HTML;
+        echo $html;
+        $i++;
+    }
 
 }
 

@@ -31,7 +31,7 @@
                     <div>
                         <label for="password">パスワード</label>
                         <input type="password" name="password" id="password">
-                        <?php if (isset($error['password'])) echo '<p class="error">'. $error['password'] . '</p>';?>
+                        <?php if (isset($error['password'])) echo '<p class="error">'. $error['password'] . '</p>' ;?>
                     </div>
 
                     <div>
