@@ -1,20 +1,3 @@
-<?php
-require_once 'system/define.php';
-require_once 'system/functions.php';
-$pdo = get_db_connect();
-
-$item_id = array();
-$item_id = get_itemId_from_cart($pdo,$user_name);
-$product_id = get_productId_from_stock($pdo,$item_id);
-$cart_list_info = array();
-foreach ($product_id as $num){
-    foreach ($num as $id){
-        array_push($cart_list_info ,get_cart_item_info($pdo,$id));
-    }
-}
-
-
-?>
 <!doctype html>
 <html lang="ja">
 <head>

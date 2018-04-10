@@ -1,10 +1,3 @@
-<?php
-require_once 'system/define.php';
-require_once 'system/functions.php';
-$pdo = get_db_connect();
-$products_info = get_product_info($pdo);
-?>
-
 <!doctype html>
 <html lang="ja">
 <head>

@@ -7,7 +7,7 @@ function check_login()
 {
     if (isset($_SESSION['login_name'])) {
         return true;
-    }else{
+    } else {
         return false;
     }
 }
@@ -516,20 +516,20 @@ function get_target_column($data, $target)
 function display_cart_item($cart_list_info)
 {
     $i = 0;
-    $option_tag_max_num = 10;
+    $option_tag_max_num = 11;
 
-    foreach ($cart_list_info as $key => $val){
+    foreach ($cart_list_info as $key => $val) {
         $amount_num[$i] = $cart_list_info[$i]['amount'];
         $option_tag = array();
-        for ($option_count=1; $option_count<$option_tag_max_num ; $option_count++){
-            if($option_count === $amount_num[$i]){
-                $option_tag.= "<option value=\"$option_count\" selected>$option_count</option>";
+        for ($option_count = 1; $option_count < $option_tag_max_num; $option_count++) {
+            if ($option_count === $amount_num[$i]) {
+                $option_tag .= "<option value=\"$option_count\" selected>$option_count</option>";
                 continue;
             }
-            $option_tag.= "<option value=\"$option_count\">$option_count</option>";
+            $option_tag .= "<option value=\"$option_count\">$option_count</option>";
         }
 
-        $html=<<<HTML
+        $html = <<<HTML
                     <li class="cartItem">
                 <div class="cartItem__inner">
                     <p class="thumbnail"><img src="{$cart_list_info[$i]['img']}" alt=""></p>
@@ -550,10 +550,10 @@ function display_cart_item($cart_list_info)
                         <dd>
                             <div>
                             <form action="" method="post">
-                                <select name="product--amount" id="product--amount">
+                                <select name="product_amount" id="product--amount">
                                 {$option_tag}
                                 </select>
-                                <button type="submit" name="amount_change" class="amount_change_btn">数量を変更</button>
+                                <button type="submit" name="amount_change" class="amount_change_btn" value="{$cart_list_info[$i]['id']}">数量を変更</button>
                             </form>
                             </div>
                         </dd>
@@ -569,6 +569,42 @@ HTML;
         echo $html;
         $i++;
     }
+
+}
+
+//カート画面で購入数を変更するボタンを押したらcart_tableをupdateする。
+function update_cart_info($pdo, $data = array())
+{
+    $pdo->beginTransaction();
+    $user_name = $data['user_name'];
+    $amount_changed = $data['product_amount'];
+    $amount_changed = intval($amount_changed);
+    $stock_id = $data['stock_id'];
+    $stock_id = intval($stock_id);
+
+    try {
+        $statement = $pdo->query("SET NAMES utf8;");
+        $statement = $pdo->query("select item_id from stock WHERE id = ?");
+        $statement->execute(array($stock_id));
+        $result = fetch(PDO::FETCH_COLUMN);
+        if($result !== false){
+            $to_update_item_id = $result;
+        }else{
+            return false;
+        }
+
+        $statement = $pdo->prepare('UPDATE cart SET amount=:amount_changed WHERE item_id = :to_update_item_id');
+        $statement->baindParam('amount_changed',$amount_changed,PDO::PARAM_INT);
+        $statement->baindParam('to_update_item_id',$to_update_item_id,PDO::PARAM_INT);
+        $statement->execute();
+        return true;
+        $pdo->commit();
+
+    } catch (PDOException $e) {
+        $pdo->rollback();
+        throw $e;
+    }
+
 
 }
 

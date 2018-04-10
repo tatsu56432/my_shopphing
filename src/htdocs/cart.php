@@ -21,14 +21,29 @@ foreach ($product_id as $num){
         array_push($cart_list_info ,get_cart_item_info($pdo,$id));
     }
 }
-
 $data['cart_list_info'] = $cart_list_info;
 
+$_POST = escape($_POST);
 $amount_change = isset($_POST['amount_change']) ? $_POST['amount_change'] : NULL;
+$product_amount = isset($_POST['product_amount']) ? $_POST['product_amount'] : NULL;
 
 if($amount_change){
 
-    echo "購入数が変更するボタンが押されました。";
+    $post_data['stock_id'] = $amount_change;
+    $post_data['product_amount'] = $product_amount;
+    $post_data['user_name'] = $user_name;
+
+//    var_dump($post_data);
+
+    $result = update_cart_info($pdo,$post_data);
+
+    if($result === true){
+        echo "データの更新に成功しました。";
+    }
+
+
+
+
 
 }
 
