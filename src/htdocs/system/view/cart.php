@@ -10,14 +10,16 @@
 </head>
 <body class="cart ">
 
-<?php include_once $_SERVER['DOCUMENT_ROOT'] . '/system/view/header.php';?>
+<?php include_once $_SERVER['DOCUMENT_ROOT'] . '/system/view/header.php'; ?>
 
 <div class="container">
     <div class="container__inner">
         <h1>カートの商品一覧</h1>
-
+        　　　　<?php
+        if(isset($change_amount)) echo $change_amount;
+            ?>
         <ul class="cartItems">
-            <?php display_cart_item($cart_list_info);?>
+            <?php display_cart_item($cart_list_info); ?>
         </ul>
 
         <div class="purchaseBlock">

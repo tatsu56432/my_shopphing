@@ -37,7 +37,10 @@ if ($amount_change) {
     $result = update_cart_info($pdo, $post_data);
 
     if ($result === true) {
-        echo "データの更新に成功しました。";
+        $data['change_amount'] = '<p class="success">成功</p>';
+        header('location:' . CART_PAGE);
+    }else{
+        $data['change_amount'] = '<p class="error">失敗</p>';
     }
 
 

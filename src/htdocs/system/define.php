@@ -9,5 +9,6 @@ define("DB_PASS","password");
 //url_template
 define("TOP_PAGE" , "/index.php");
 define("LOGIN_PAGE" , "/login.php");
+define("CART_PAGE" , "/cart.php");
 define("ADMIN_PAGE" , "/admin/index.php");
 define("ADMIN_PRODUCT_PAGE" , "/admin/product_list.php");

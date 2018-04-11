@@ -262,7 +262,7 @@ function update_stock($pdo, $update_data)
 //カートに入れるボタンを押したらstockテーブルにカートに入れられた商品をinertする処理、すでにそのユーザーがその商品をカートに入れていたらinertではなくupdateする。
 function insert_or_update_cart($pdo, $data)
 {
-    $pdo->beginTransaction();
+//    $pdo->beginTransaction();
     try {
         if (is_array($data)) {
             $id = NULL;
@@ -314,6 +314,7 @@ function insert_or_update_cart($pdo, $data)
                 $statement->bindValue(':updated_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
                 $statement->execute();
             }
+
 
             $pdo->commit();
 
@@ -655,26 +656,23 @@ function update_cart_info($pdo, $data = array())
             return false;
         }
 
-//    var_dump($amount_changed);
-//    var_dump($to_update_item_id);
-//    var_dump($user_id);
         //cartテーブルの数量コラムの欄をアップデート
         //条件user_idとitem_idが一致したらそのrowをアップデート
-        $statement = $pdo->prepare('UPDATE cart SET amount=:amount_changed WHERE item_id=:to_update_item_id and user_id=:user_id');
-//      $statement->execute(array($amount_changed,$to_update_item_id,$user_id));
-
-        $statement->bindParam(':amount_changed', $amount_changed, PDO::PARAM_INT);
-        $statement->bindParam(':to_update_item_id', $to_update_item_id, PDO::PARAM_INT);
-        $statement->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $statement->execute();
+      $statement = $pdo->prepare('UPDATE cart SET amount=? WHERE item_id=? and user_id=?');
+      $statement->execute(array($amount_changed,$to_update_item_id,$user_id));
+//        $statement->bindParam(':amount_changed', $amount_changed, PDO::PARAM_INT);
+//        $statement->bindParam(':to_update_item_id', $to_update_item_id, PDO::PARAM_INT);
+//        $statement->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+//        $statement->execute();
+        $pdo->commit();
+//        $pdo->save();
         return true;
-        $pdo->save();
     }catch (PDOException $e){
         $pdo->rollback();
         throw $e;
     }
 
-    $pdo->commit();
+
 
 }
 
