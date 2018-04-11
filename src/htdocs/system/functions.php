@@ -467,7 +467,7 @@ function get_productId_array_from_stock($pdo, $data)
     return $result;
 }
 
-
+//stockテーブルから取得したproductIDを多次元配列から普通の配列に変換
 function get_productIds($productId_vars)
 {
 
@@ -554,8 +554,8 @@ function get_target_column($data, $target)
 function display_cart_item($cart_list_info)
 {
     $i = 0;
-    $option_tag_max_num = 11;
 
+    $option_tag_max_num = 11;
     foreach ($cart_list_info as $key => $val) {
         $amount_num[$i] = $cart_list_info[$i]['amount'];
         $option_tag = array();
@@ -613,16 +613,19 @@ HTML;
 //カート画面で購入数を変更するボタンを押したらcart_tableをupdateする。
 function update_cart_info($pdo, $data = array())
 {
-    $pdo->beginTransaction();
-    $user_name = $data['user_name'];
-    $amount_changed = $data['product_amount'];
-    $amount_changed = intval($amount_changed);
-    $stock_id = $data['stock_id'];
-    $stock_id = intval($stock_id);
+
+//  $pdo->beginTransaction();
 
     try {
+        $user_name = $data['user_name'];
+        $amount_changed = $data['product_amount'];
+        $amount_changed = intval($amount_changed);
+        $stock_id = $data['stock_id'];
+        $stock_id = intval($stock_id);
+
+        //条件文に使用するitem_idをstockテーブルから取得
         $statement = $pdo->query("SET NAMES utf8;");
-        $statement = $pdo->query("select item_id from stock WHERE id = ?");
+        $statement = $pdo->query("SELECT item_id FROM stock WHERE id = ?");
         $statement->execute(array($stock_id));
         $result = fetch(PDO::FETCH_COLUMN);
         if ($result !== false) {
@@ -631,9 +634,22 @@ function update_cart_info($pdo, $data = array())
             return false;
         }
 
-        $statement = $pdo->prepare('UPDATE cart SET amount=:amount_changed WHERE item_id = :to_update_item_id');
-        $statement->baindParam('amount_changed', $amount_changed, PDO::PARAM_INT);
-        $statement->baindParam('to_update_item_id', $to_update_item_id, PDO::PARAM_INT);
+        //条件文に使用するuser_idを取得する
+        $statement = $pdo->query("SELECT id FROM user WHERE user_name = ?");
+        $statement->execute(array($user_name));
+        $result = fetch(PDO::FETCH_COLUMN);
+        if ($result !== false) {
+            $user_id = $result;
+        } else {
+            return false;
+        }
+
+        //cartテーブルの数量コラムの欄をアップデート
+        //条件user_idとitem_idが一致したらそのrowをアップデート
+        $statement = $pdo->prepare('UPDATE cart SET amount=:amount_changed WHERE item_id = :to_update_item_id and user_id = :user_id');
+        $statement->baindParam(':amount_changed', $amount_changed, PDO::PARAM_INT);
+        $statement->baindParam(':to_update_item_id', $to_update_item_id, PDO::PARAM_INT);
+        $statement->baindParam(':user_id', $user_id, PDO::PARAM_INT);
         $statement->execute();
         return true;
         $pdo->commit();
