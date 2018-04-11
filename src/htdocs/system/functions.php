@@ -315,8 +315,11 @@ function insert_or_update_cart($pdo, $data)
                 $statement->execute();
             }
 
-
             $pdo->commit();
+
+            return true;
+
+
 
         } else {
             return "データの受け渡しに失敗しました。";
@@ -673,6 +676,7 @@ function update_cart_info($pdo, $data = array())
     }
 }
 
+//cart_itemの削除ボタンを押したら、対象のカート商品を削除する
 function delete_cart_item($pdo, $delete_item_id)
 {
 
@@ -680,7 +684,6 @@ function delete_cart_item($pdo, $delete_item_id)
     $delete_row_id = $delete_item_id;
     $delete_row_id = intval($delete_row_id);
 
-    var_dump($delete_row_id);
     try {
         $statement = $pdo->query("SET NAMES utf8;");
         $statement = $pdo->prepare('DELETE from cart WHERE id = :delete_row_id');
@@ -693,6 +696,38 @@ function delete_cart_item($pdo, $delete_item_id)
         throw $e;
     }
 }
+
+//各ユーザーごとのカートに入っている商品購入数の合計値を取得する
+function get_cart_sum_amount($pdo,$user_name){
+
+    //$pdo->beginTransaction();
+
+    try{
+        $statement = $pdo->prepare('SET NAMES utf8;');
+        $statement = $pdo->prepare('SELECT id from user WHERE user_name = :user_name');
+        $statement->bindParam(':user_name',$user_name,PDO::PARAM_INT);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_COLUMN);
+
+        if($result !== false){
+         $user_id = $result;
+        }else{
+            return false;
+        }
+
+        $statement = $pdo->prepare('SELECT sum(amount) FROM cart WHERE user_id = :user_id');
+        $statement->bindParam(':user_id',$user_id,PDO::PARAM_INT);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_COLUMN);
+        return $result;
+
+        $pdo->commit();
+    }catch (PDOException $e){
+        $pdo->rollback();
+        throw $e;
+    }
+}
+
 
 //adminページ商品一覧出力用関数
 function display_productItem_admin($data, $id_vars = NULL, $name_vars = NULL, $price_vars = NULL, $drink_img_path_vars = NULL, $status_vars = NULL)

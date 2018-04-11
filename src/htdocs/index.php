@@ -19,7 +19,14 @@ if($purchase_btn){
         'login_name'=>$login_name,
         'product_id'=>$purchase_btn
     );
-    insert_or_update_cart($pdo,$post_data);
+
+    $insert_or_update_result = insert_or_update_cart($pdo,$post_data);
+    $cart_sum_amount_result = get_cart_sum_amount($pdo,$login_name);
+    $data['cart_sum_amount_result'] = $cart_sum_amount_result;
+    if($insert_or_update_result===true){
+        header('location:'.TOP_PAGE);
+    }
+
 }
 
 $view = view('index.php',$data);
