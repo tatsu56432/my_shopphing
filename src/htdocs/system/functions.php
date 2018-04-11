@@ -455,7 +455,7 @@ function get_itemId_from_cart($pdo, $post_name)
 }
 
 //stockテーブルから各ユーザーのカートに入れた商品IDを取得(item_idではなく商品IDそのものを取得)
-function get_productId_from_stock($pdo, $data)
+function get_productId_array_from_stock($pdo, $data)
 {
     $statement = $pdo->query("SET NAMES utf8;");
     $result = array();
@@ -468,29 +468,56 @@ function get_productId_from_stock($pdo, $data)
 }
 
 
+function get_productIds($productId_vars){
+
+    $product_ids = array();
+    foreach ($productId_vars as $num){
+        foreach ($num as $product_id){
+            array_push($product_ids,$product_id);
+        }
+    }
+    return $product_ids;
+
+}
+
+
 // get_productID_from_stockで取得した各ユーザーがカートに入れている商品IDを使って、カート表示する商品情報を取得する。
-function get_cart_item_info($pdo, $product_id)
+function get_cart_item_info($pdo, $post_data = array())
 {
+    $pdo->beginTransaction();
+
+    var_dump($post_data);
 
     $data = array();
+    $product_id = $post_data['product_id'];
+    $user_id = $post_data['login_name'];
     $statement = $pdo->query("SET NAMES utf8;");
-    //3つのテーブルを内部結合して、カート表示に必要な商品IDに一致したものを取得する
-    $statement = $pdo->prepare('SELECT item.*,stock.stock,cart.amount FROM item INNER JOIN stock ON item.id = stock.id INNER JOIN cart ON stock.item_id = cart.item_id where item.id = :id');
-    $statement->execute(array($product_id));
-    while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-        $data = array(
-            'id' => $row["id"],
-            'name' => $row["name"],
-            'price' => $row["price"],
-            'img' => $row["img"],
-            'status' => $row["status"],
-            'created_at' => $row["created_at"],
-            'updated_at' => $row["updated_at"],
-            'stock' => $row["stock"],
-            'amount' => $row["amount"],
-        );
+    try{
+        //3つのテーブルを内部結合して、カート表示に必要な商品IDに一致したものを取得する
+        //条件、itemの中の商品IDとカートの中の購入者のユーザーIDが一致したらその行を取得する
+        $statement = $pdo->prepare('SELECT item.*,stock.stock,cart.* FROM item INNER JOIN stock ON item.id = stock.id INNER JOIN cart ON stock.item_id = cart.item_id where item.id = ? and cart.user_id = ?');
+        $statement->bindValue(':id',$product_id,PDO::FETCH_ASSOC);
+        $statement->bindValue(':user_id',$user_id,PDO::FETCH_ASSOC);
+        $statement->execute(array($product_id,$user_id));
+        while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+            $data = array(
+                'id' => $row["id"],
+                'name' => $row["name"],
+                'price' => $row["price"],
+                'img' => $row["img"],
+                'status' => $row["status"],
+                'created_at' => $row["created_at"],
+                'updated_at' => $row["updated_at"],
+                'stock' => $row["stock"],
+                'amount' => $row["amount"],
+            );
+        }
+        return $data;
+        $pdo->commit();
+    }catch (PDOException $e){
+        $pdo -> rollback();
+        throw $e;
     }
-    return $data;
 }
 
 
