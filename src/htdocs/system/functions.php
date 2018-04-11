@@ -468,12 +468,13 @@ function get_productId_array_from_stock($pdo, $data)
 }
 
 
-function get_productIds($productId_vars){
+function get_productIds($productId_vars)
+{
 
     $product_ids = array();
-    foreach ($productId_vars as $num){
-        foreach ($num as $product_id){
-            array_push($product_ids,$product_id);
+    foreach ($productId_vars as $num) {
+        foreach ($num as $product_id) {
+            array_push($product_ids, $product_id);
         }
     }
     return $product_ids;
@@ -482,23 +483,33 @@ function get_productIds($productId_vars){
 
 
 // get_productID_from_stockで取得した各ユーザーがカートに入れている商品IDを使って、カート表示する商品情報を取得する。
-function get_cart_item_info($pdo, $post_data = array())
+function get_cart_item_info($pdo, $post_name = NULL, $post_product_id = NULL)
 {
-    $pdo->beginTransaction();
 
-    var_dump($post_data);
+//    $pdo->beginTransaction();
 
+    $product_id = $post_product_id;
+    $product_id = intval($product_id);
+    $user_name = $post_name;
     $data = array();
-    $product_id = $post_data['product_id'];
-    $user_id = $post_data['login_name'];
-    $statement = $pdo->query("SET NAMES utf8;");
-    try{
+    try {
+        $statement = $pdo->query("SET NAMES utf8;");
+        //検索に必要なuser_idをuser_tableから取得する。
+        $statement = $pdo->prepare('SELECT id FROM user WHERE user_name = ?');
+        $statement->execute(array($user_name));
+        $result = $statement->fetch(PDO::FETCH_COLUMN);
+        if ($result !== false) {
+            $user_id = $result;
+        } else {
+            return false;
+        }
         //3つのテーブルを内部結合して、カート表示に必要な商品IDに一致したものを取得する
         //条件、itemの中の商品IDとカートの中の購入者のユーザーIDが一致したらその行を取得する
-        $statement = $pdo->prepare('SELECT item.*,stock.stock,cart.* FROM item INNER JOIN stock ON item.id = stock.id INNER JOIN cart ON stock.item_id = cart.item_id where item.id = ? and cart.user_id = ?');
-        $statement->bindValue(':id',$product_id,PDO::FETCH_ASSOC);
-        $statement->bindValue(':user_id',$user_id,PDO::FETCH_ASSOC);
-        $statement->execute(array($product_id,$user_id));
+        $statement = $pdo->prepare('SELECT item.*,stock.stock,cart.* FROM item INNER JOIN stock ON item.id = stock.id INNER JOIN cart ON stock.item_id = cart.item_id where item.id = :id and cart.user_id = :user_id');
+        $statement->bindParam(':id', $product_id, PDO::FETCH_COLUMN);
+        $statement->bindParam(':user_id', $user_id, PDO::FETCH_COLUMN);
+        $statement->execute();
+//        $statement->execute(array($product_id,$user_id));
         while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
             $data = array(
                 'id' => $row["id"],
@@ -514,8 +525,8 @@ function get_cart_item_info($pdo, $post_data = array())
         }
         return $data;
         $pdo->commit();
-    }catch (PDOException $e){
-        $pdo -> rollback();
+    } catch (PDOException $e) {
+        $pdo->rollback();
         throw $e;
     }
 }
@@ -614,15 +625,15 @@ function update_cart_info($pdo, $data = array())
         $statement = $pdo->query("select item_id from stock WHERE id = ?");
         $statement->execute(array($stock_id));
         $result = fetch(PDO::FETCH_COLUMN);
-        if($result !== false){
+        if ($result !== false) {
             $to_update_item_id = $result;
-        }else{
+        } else {
             return false;
         }
 
         $statement = $pdo->prepare('UPDATE cart SET amount=:amount_changed WHERE item_id = :to_update_item_id');
-        $statement->baindParam('amount_changed',$amount_changed,PDO::PARAM_INT);
-        $statement->baindParam('to_update_item_id',$to_update_item_id,PDO::PARAM_INT);
+        $statement->baindParam('amount_changed', $amount_changed, PDO::PARAM_INT);
+        $statement->baindParam('to_update_item_id', $to_update_item_id, PDO::PARAM_INT);
         $statement->execute();
         return true;
         $pdo->commit();
