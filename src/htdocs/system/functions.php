@@ -457,14 +457,24 @@ function get_itemId_from_cart($pdo, $post_name)
 //stockテーブルから各ユーザーのカートに入れた商品IDを取得(item_idではなく商品IDそのものを取得)
 function get_productId_array_from_stock($pdo, $data)
 {
-    $statement = $pdo->query("SET NAMES utf8;");
-    $result = array();
-    foreach ($data as $val) {
-        $statement = $pdo->prepare('SELECT id FROM stock WHERE item_id = ?');
-        $statement->execute(array($val));
-        $result[] = $statement->fetch(PDO::FETCH_ASSOC);
+//    $pdo ->beginTransaction();
+    try{
+        $statement = $pdo->query("SET NAMES utf8;");
+        $result = array();
+        foreach ($data as $val) {
+            $statement = $pdo->prepare('SELECT id FROM stock WHERE item_id = ?');
+            $statement->execute(array($val));
+            $result[] = $statement->fetch(PDO::FETCH_ASSOC);
+        }
+        return $result;
+        $pdo->commit();
+    }catch (PDOException $e){
+        $pdo->rollback();
+        throw  $e;
     }
-    return $result;
+    $pdo->commit();
+
+
 }
 
 //stockテーブルから取得したproductIDを多次元配列から普通の配列に変換
@@ -551,6 +561,7 @@ function get_target_column($data, $target)
 }
 
 //ユーザーがカートに入れた商品の一覧を表示する。カートitemの中での購入数変更用selectboxはそのユーザーがカートに入れた数量をデフォルトで表示させる。
+////購入数が10以上になったときのバリデーションが必要
 function display_cart_item($cart_list_info)
 {
     $i = 0;
@@ -614,51 +625,56 @@ HTML;
 function update_cart_info($pdo, $data = array())
 {
 
-//  $pdo->beginTransaction();
-
-    try {
+//    $pdo->beginTransaction();
+    try{
         $user_name = $data['user_name'];
         $amount_changed = $data['product_amount'];
         $amount_changed = intval($amount_changed);
-        $stock_id = $data['stock_id'];
-        $stock_id = intval($stock_id);
-
-        //条件文に使用するitem_idをstockテーブルから取得
+        //stockIDではなくて。。。cartIDだった
+        $cart_id = $data['cart_id'];
+        $cart_id = intval($cart_id);
         $statement = $pdo->query("SET NAMES utf8;");
-        $statement = $pdo->query("SELECT item_id FROM stock WHERE id = ?");
-        $statement->execute(array($stock_id));
-        $result = fetch(PDO::FETCH_COLUMN);
-        if ($result !== false) {
-            $to_update_item_id = $result;
-        } else {
-            return false;
-        }
-
         //条件文に使用するuser_idを取得する
-        $statement = $pdo->query("SELECT id FROM user WHERE user_name = ?");
+        $statement = $pdo->prepare('SELECT id FROM user WHERE user_name = ?');
         $statement->execute(array($user_name));
-        $result = fetch(PDO::FETCH_COLUMN);
+        $result = $statement->fetch(PDO::FETCH_COLUMN);
         if ($result !== false) {
             $user_id = $result;
         } else {
             return false;
         }
 
+        //条件文に使用するitem_idをcartテーブルから取得
+        //条件cartのidとuser_idが一致したら
+        $statement = $pdo->prepare('SELECT item_id FROM cart WHERE id = ? and user_id = ?');
+        $statement->execute(array($cart_id,$user_id));
+        $result = $statement->fetch(PDO::FETCH_COLUMN);
+        if ($result !== false) {
+            $to_update_item_id = $result;
+        } else {
+            return false;
+        }
+
+//    var_dump($amount_changed);
+//    var_dump($to_update_item_id);
+//    var_dump($user_id);
         //cartテーブルの数量コラムの欄をアップデート
         //条件user_idとitem_idが一致したらそのrowをアップデート
-        $statement = $pdo->prepare('UPDATE cart SET amount=:amount_changed WHERE item_id = :to_update_item_id and user_id = :user_id');
-        $statement->baindParam(':amount_changed', $amount_changed, PDO::PARAM_INT);
-        $statement->baindParam(':to_update_item_id', $to_update_item_id, PDO::PARAM_INT);
-        $statement->baindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $statement = $pdo->prepare('UPDATE cart SET amount=:amount_changed WHERE item_id=:to_update_item_id and user_id=:user_id');
+//      $statement->execute(array($amount_changed,$to_update_item_id,$user_id));
+
+        $statement->bindParam(':amount_changed', $amount_changed, PDO::PARAM_INT);
+        $statement->bindParam(':to_update_item_id', $to_update_item_id, PDO::PARAM_INT);
+        $statement->bindParam(':user_id', $user_id, PDO::PARAM_INT);
         $statement->execute();
         return true;
-        $pdo->commit();
-
-    } catch (PDOException $e) {
+        $pdo->save();
+    }catch (PDOException $e){
         $pdo->rollback();
         throw $e;
     }
 
+    $pdo->commit();
 
 }
 
