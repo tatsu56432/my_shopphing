@@ -21,13 +21,14 @@ $cart_list_info = array();
 foreach ($product_ids as $product_id){
     array_push($cart_list_info,get_cart_item_info($pdo, $user_name,$product_id));
 }
-
-
 $data['cart_list_info'] = $cart_list_info;
+
 
 $_POST = escape($_POST);
 $amount_change = isset($_POST['amount_change']) ? $_POST['amount_change'] : NULL;
+$submit_delete = isset($_POST['product_delete']) ? $_POST['product_delete'] : NULL;
 $product_amount = isset($_POST['product_amount']) ? $_POST['product_amount'] : NULL;
+
 if ($amount_change) {
 
     $post_data['cart_id'] = $amount_change;
@@ -42,8 +43,15 @@ if ($amount_change) {
     }else{
         $data['change_amount'] = '<p class="error">失敗</p>';
     }
+}
 
-
+if($submit_delete){
+    $result = delete_cart_item($pdo,$submit_delete);
+    if($result === true){
+        header('location:'.CART_PAGE);
+    }else{
+        echo "失敗した";
+    }
 }
 
 

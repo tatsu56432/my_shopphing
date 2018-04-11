@@ -459,7 +459,7 @@ function get_itemId_from_cart($pdo, $post_name)
 function get_productId_array_from_stock($pdo, $data)
 {
 //    $pdo ->beginTransaction();
-    try{
+    try {
         $statement = $pdo->query("SET NAMES utf8;");
         $result = array();
         foreach ($data as $val) {
@@ -469,7 +469,7 @@ function get_productId_array_from_stock($pdo, $data)
         }
         return $result;
         $pdo->commit();
-    }catch (PDOException $e){
+    } catch (PDOException $e) {
         $pdo->rollback();
         throw  $e;
     }
@@ -610,7 +610,7 @@ function display_cart_item($cart_list_info)
                     </dl>
                     <div class="product--delete">
                         <form action="" method="post">
-                            <button type="submit" class="product_change_btn" name="product_change">削除する</button>
+                            <button type="submit" class="product_delete_btn" name="product_delete" value="{$cart_list_info[$i]['id']}">削除する</button>
                         </form>
                     </div>
                 </div>
@@ -627,7 +627,7 @@ function update_cart_info($pdo, $data = array())
 {
 
 //    $pdo->beginTransaction();
-    try{
+    try {
         $user_name = $data['user_name'];
         $amount_changed = $data['product_amount'];
         $amount_changed = intval($amount_changed);
@@ -648,7 +648,7 @@ function update_cart_info($pdo, $data = array())
         //条件文に使用するitem_idをcartテーブルから取得
         //条件cartのidとuser_idが一致したら
         $statement = $pdo->prepare('SELECT item_id FROM cart WHERE id = ? and user_id = ?');
-        $statement->execute(array($cart_id,$user_id));
+        $statement->execute(array($cart_id, $user_id));
         $result = $statement->fetch(PDO::FETCH_COLUMN);
         if ($result !== false) {
             $to_update_item_id = $result;
@@ -658,8 +658,8 @@ function update_cart_info($pdo, $data = array())
 
         //cartテーブルの数量コラムの欄をアップデート
         //条件user_idとitem_idが一致したらそのrowをアップデート
-      $statement = $pdo->prepare('UPDATE cart SET amount=? WHERE item_id=? and user_id=?');
-      $statement->execute(array($amount_changed,$to_update_item_id,$user_id));
+        $statement = $pdo->prepare('UPDATE cart SET amount=? WHERE item_id=? and user_id=?');
+        $statement->execute(array($amount_changed, $to_update_item_id, $user_id));
 //        $statement->bindParam(':amount_changed', $amount_changed, PDO::PARAM_INT);
 //        $statement->bindParam(':to_update_item_id', $to_update_item_id, PDO::PARAM_INT);
 //        $statement->bindParam(':user_id', $user_id, PDO::PARAM_INT);
@@ -667,13 +667,31 @@ function update_cart_info($pdo, $data = array())
         $pdo->commit();
 //        $pdo->save();
         return true;
-    }catch (PDOException $e){
+    } catch (PDOException $e) {
         $pdo->rollback();
         throw $e;
     }
+}
 
+function delete_cart_item($pdo, $delete_item_id)
+{
 
+//    $pdo->beginTransaction();
+    $delete_row_id = $delete_item_id;
+    $delete_row_id = intval($delete_row_id);
 
+    var_dump($delete_row_id);
+    try {
+        $statement = $pdo->query("SET NAMES utf8;");
+        $statement = $pdo->prepare('DELETE from cart WHERE id = :delete_row_id');
+        $statement->bindParam(':delete_row_id',$delete_row_id,PDO::PARAM_INT);
+        $statement->execute();
+        $pdo->commit();
+        return true;
+    } catch (PDOException $e) {
+        $pdo->rollback();
+        throw $e;
+    }
 }
 
 //adminページ商品一覧出力用関数
