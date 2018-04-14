@@ -28,7 +28,7 @@ function get_db_connect()
     $dsn = 'mysql:dbname=' . DB_NAME . ';host=' . HOST . '';
     $user = DB_USER_NAME;
     $password = DB_PASS;
-//    $pdo = "";
+//  $pdo = "";
     try {
         $pdo = new PDO($dsn, $user, $password);
         $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
@@ -769,8 +769,11 @@ function get_cart_sum_amount($pdo,$user_name){
         $statement->bindParam(':user_id',$user_id,PDO::PARAM_INT);
         $statement->execute();
         $result = $statement->fetch(PDO::FETCH_COLUMN);
-        return $result;
-
+        if($result !== NULL){
+            return $result;
+        }else{
+            return 0;
+        }
         $pdo->commit();
     }catch (PDOException $e){
         $pdo->rollback();
