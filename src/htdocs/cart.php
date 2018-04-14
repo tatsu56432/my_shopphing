@@ -8,18 +8,22 @@ if ($login_flag === false) {
 }
 
 $data = array();
-$user_name = isset($_SESSION['login_name']) ? $_SESSION['login_name'] : NULL;
+$login_name = isset($_SESSION['login_name']) ? $_SESSION['login_name'] : NULL;
 
+
+//現在のカートの中の購入数を表示
+$cart_sum_amount_result = get_cart_sum_amount($pdo,$login_name);
+$data['cart_sum_amount_result'] = $cart_sum_amount_result;
 
 //カートの商品一覧の情報諸々を頑張って取得する。もっとスマートにできる？
 $item_id = array();
-$item_id = get_itemId_from_cart($pdo, $user_name);
+$item_id = get_itemId_from_cart($pdo, $login_name);
 $product_id = get_productId_array_from_stock($pdo, $item_id);
 $product_ids = get_productIds($product_id);
 
 $cart_list_info = array();
 foreach ($product_ids as $product_id){
-    array_push($cart_list_info,get_cart_item_info($pdo, $user_name,$product_id));
+    array_push($cart_list_info,get_cart_item_info($pdo, $login_name,$product_id));
 }
 $data['cart_list_info'] = $cart_list_info;
 
@@ -33,7 +37,7 @@ if ($amount_change) {
 
     $post_data['cart_id'] = $amount_change;
     $post_data['product_amount'] = $product_amount;
-    $post_data['user_name'] = $user_name;
+    $post_data['user_name'] = $login_name;
 
     $result = update_cart_info($pdo, $post_data);
 
