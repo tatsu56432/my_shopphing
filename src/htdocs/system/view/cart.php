@@ -15,20 +15,16 @@
 <div class="container">
     <div class="container__inner">
         <h1>カートの商品一覧</h1>
-        　　　　<?php
-        if(isset($change_amount)) echo $change_amount;
-            ?>
         <ul class="cartItems">
             <?php display_cart_item($cart_list_info); ?>
         </ul>
 
-        <div class="purchaseBlock">
-            <button type="submit" class="" name="">購入する</button>
-        </div>
-
+        <?php  display_cart_result($purchase_points,$cart_sum_amount_result,$cart_total_fee);?>
 
     </div>
 </div>
+
+
 
 </body>
 </html>

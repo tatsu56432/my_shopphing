@@ -625,6 +625,25 @@ HTML;
 
 }
 
+
+
+
+function display_cart_result($purchase_points,$cart_sum_amount_result,$cart_total_fee){
+    $html = <<<HTML
+<div class="purchaseBlock">
+            <div class="purchaseBlock__inner">
+                <p class="purchase_points">購入点数:{$purchase_points}商品</p>
+                <p class="total_purchase_points">購入商品合計数:{$cart_sum_amount_result}点</p>
+                <p class="total_fee">合計金額:{$cart_total_fee}円</p>
+                <form action="" method="post">
+                <button type="submit" class="purchase_btn" name="purchase">購入する</button>
+                </form>
+            </div>
+        </div>
+HTML;
+    echo $html;
+}
+
 //カート画面で購入数を変更するボタンを押したらcart_tableをupdateする。
 function update_cart_info($pdo, $data = array())
 {
@@ -697,6 +716,37 @@ function delete_cart_item($pdo, $delete_item_id)
     }
 }
 
+//各ユーザーごとのカートに入っている購入点数のカウント数を取得する
+function get_cart_record($pdo,$user_name){
+
+//    $pdo->beginTransaction();
+    $user_id = '';
+    try{
+        $statement = $pdo->prepare('SET NAMES utf8;');
+        $statement = $pdo->prepare('SELECT id from user WHERE user_name = :user_name');
+        $statement->bindParam(':user_name',$user_name,PDO::PARAM_INT);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_COLUMN);
+        if($result !== false){
+            $user_id = $result;
+        }else{
+            return false;
+        }
+
+        $statement = $pdo->prepare('SELECT count(item_id) FROM cart WHERE user_id = :user_id');
+        $statement->bindParam(':user_id',$user_id,PDO::PARAM_INT);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_COLUMN);
+        return $result;
+
+        $pdo->commit();
+    }catch (PDOException $e){
+        $pdo->rollback();
+        throw $e;
+    }
+
+}
+
 //各ユーザーごとのカートに入っている商品購入数の合計値を取得する
 function get_cart_sum_amount($pdo,$user_name){
 
@@ -727,6 +777,44 @@ function get_cart_sum_amount($pdo,$user_name){
         throw $e;
     }
 }
+
+//各ユーザーのカートの中の商品の合計金額を取得
+function get_cart_total_fee($pdo,$user_name){
+    try{
+        $statement = $pdo->prepare('SET NAMES utf8;');
+        $statement = $pdo->prepare('SELECT id from user WHERE user_name = :user_name');
+        $statement->bindParam(':user_name',$user_name,PDO::PARAM_INT);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_COLUMN);
+
+        if($result !== false){
+            $user_id = $result;
+        }else{
+            return false;
+        }
+
+        //3つのテーブルを内部結合して、各商品の購入数＊値段を取得
+        $statement = $pdo->prepare('SELECT item.price * cart.amount FROM item INNER JOIN stock ON item.id = stock.id INNER JOIN cart ON stock.item_id = cart.item_id where cart.user_id = :user_id');
+        $statement->bindParam(':user_id',$user_id,PDO::PARAM_INT);
+        $statement->execute();
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+        $tolal_fee = 0;
+        foreach ($result as $item){
+            foreach ($item as $key =>$val){
+                $tolal_fee += $val;
+            }
+        }
+
+        return $tolal_fee;
+
+        $pdo->commit();
+    }catch (PDOException $e){
+        $pdo->rollback();
+        throw $e;
+    }
+}
+
+
 
 
 //adminページ商品一覧出力用関数
