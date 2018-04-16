@@ -636,7 +636,7 @@ function display_cart_result($purchase_points,$cart_sum_amount_result,$cart_tota
                 <p class="total_purchase_points">購入商品合計数:{$cart_sum_amount_result}点</p>
                 <p class="total_fee">合計金額:{$cart_total_fee}円</p>
                 <form action="" method="post">
-                <button type="submit" class="purchase_btn" name="purchase">購入する</button>
+                <button type="submit" class="purchase_btn" name="purchase" id="myContainer"></button>
                 </form>
             </div>
         </div>
