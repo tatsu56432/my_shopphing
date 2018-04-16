@@ -16,7 +16,7 @@
     </div>
 </header>
 
-<?php if($register_result === true){ echo "<p class='success'>ユーザーIDとパスワードの登録に成功しました。<p>"; }else{ echo "<p class='error'>同じユーザー名がすでに登録されています。<p>"; }?>
+<?php if(isset($register_result) && $register_result === true){ echo "<p class='success'>ユーザーIDとパスワードの登録に成功しました。<p>"; }elseif(isset($register_result) && $register_result===false){ echo "<p class='error'>同じユーザー名がすでに登録されています。<p>"; }?>
 
 <div class="container">
     <div class="container__inner">

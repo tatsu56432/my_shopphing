@@ -15,6 +15,7 @@ if ($submit_register) {
     $post_data = array(
         'login_name' => $login_name,
         'password' => $password
+
     );
 
     $error = validate_ID_PASS($post_data);
