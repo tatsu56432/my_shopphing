@@ -606,14 +606,14 @@ function display_cart_item($cart_list_info)
                                 <select name="product_amount" id="product--amount">
                                 {$option_tag}
                                 </select>
-                                <button type="submit" name="amount_change" class="amount_change_btn" value="{$cart_list_info[$i]['id']}">数量を変更</button>
+                                <button type="submit" name="amount_change" class="amount_change_btn" value="{$cart_list_info[$i]['id']}" readonly >数量を変更</button>
                             </form>
                             </div>
                         </dd>
                     </dl>
                     <div class="product--delete">
                         <form action="" method="post">
-                            <button type="submit" class="product_delete_btn" name="product_delete" value="{$cart_list_info[$i]['id']}">削除する</button>
+                            <button type="submit" class="product_delete_btn" name="product_delete" value="{$cart_list_info[$i]['id']}" readonly >削除する</button>
                         </form>
                     </div>
                 </div>
@@ -632,10 +632,12 @@ function display_cart_result($purchase_points,$cart_sum_amount_result,$cart_tota
     $html = <<<HTML
 <div class="purchaseBlock">
             <div class="purchaseBlock__inner">
+                <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
                 <p class="purchase_points">購入点数:{$purchase_points}商品</p>
                 <p class="total_purchase_points">購入商品合計数:{$cart_sum_amount_result}点</p>
-                <p class="total_fee">合計金額:{$cart_total_fee}円</p>
-                <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+                <p class="total_fee">
+                合計金額:{$cart_total_fee}円
+                </p>
                 <button type="submit" class="purchase_btn" name="purchase" id="paypal-button-container"></button>
                 <input type="hidden" name="" value="tatsu56432-buyer@gmail.com" disabled>
                 <div id="paypal-end" style="display:none">
@@ -716,6 +718,70 @@ function delete_cart_item($pdo, $delete_item_id)
         $pdo->rollback();
         throw $e;
     }
+}
+
+//deleteボタンから送信されるvalueの値が各ユーザーごとに正当なものか検証する、cart_tableからuser_idを使ってidがその中にあるか検証。
+function validate_delete_cart_value($pdo,$login_name,$delete_value){
+
+    $post_delete_value = intval($delete_value);
+
+
+//    $pdo->beginTransaction();
+
+    $data = array();
+    try{
+        $statement = $pdo->query("SET NAMES utf8");
+        $statement = $pdo->prepare('SELECT id FROM user WHERE user_name = :login_name');
+        $statement->bindParam(':login_name',$login_name,PDO::PARAM_STR);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_COLUMN);
+        if($result !== false){
+            $user_id = $result;
+        }else{
+            return false;
+        }
+
+        $statement = $pdo->prepare('SELECT id FROM cart WHERE user_id = :user_id');
+        $statement->bindParam(':user_id',$user_id,PDO::PARAM_INT);
+        $statement->execute();
+        while($row = $statement->fetch(PDO::FETCH_ASSOC)){
+            $data[] = array(
+                'id' => $row["id"],
+            );
+        }
+
+//        $pdo->commit();
+
+        $cart_ids = array();
+        if($data !== false ){
+
+            foreach ($data as $num){
+                foreach ($num as $cart_id){
+                    array_push($cart_ids,$cart_id);
+                }
+            }
+
+            $delete_flag = in_array($post_delete_value,$cart_ids);
+            if($delete_flag === true){
+                return true;
+            }else{
+                return false;
+            }
+
+        }else{
+
+            $error['delete_cart'] = '入力された値が不正です';
+            return $error;
+        }
+
+
+
+    }catch (PDOException $e){
+//        $pdo ->rollback();
+        throw $e;
+    }
+
+
 }
 
 //各ユーザーごとのカートに入っている購入点数のカウント数を取得する
@@ -1006,4 +1072,54 @@ function validation_stock($input = NULL)
 
     return $error;
 
+}
+
+//paypalAPI用Client-sideRESTをPHPを使って発行する
+function paypal_settlemen($total_amount){
+
+    //defineからpaypalAPI用のCLIENT_IDと通過種類を取得
+    $client_id = CLIENT_ID;
+    $currency = CURRENCY;
+
+    echo <<<SCRIPT
+    <script>
+    paypal.Button.render({
+
+        env: 'sandbox',
+        client: {
+            sandbox:    '{$client_id}'
+//            production: '<insert production client id>'
+        },
+
+        // Show the buyer a 'Pay Now' button in the checkout flow
+        commit: true,
+
+        // payment() is called when the button is clicked
+        payment: function(data, actions) {
+
+            // Make a call to the REST api to create the payment
+            return actions.payment.create({
+                payment: {
+                    transactions: [
+                        {
+                            amount: { total: '{$total_amount}', currency: '{$currency}' }
+                        }
+                    ]
+                }
+            });
+        },
+
+        // onAuthorize() is called when the buyer approves the payment
+        onAuthorize: function(data, actions) {
+            // Make a call to the REST api to execute the payment
+            return actions.payment.execute().then(function() {
+                window.alert('Payment Complete!');
+            });
+        }
+
+    }, '#paypal-button-container');
+
+</script>
+
+SCRIPT;
 }
