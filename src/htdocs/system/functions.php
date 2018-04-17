@@ -640,7 +640,6 @@ function display_cart_result($purchase_points,$cart_sum_amount_result,$cart_tota
                 </p>
                 <button type="submit" class="purchase_btn" name="purchase" id="paypal-button-container"></button>
                 <input type="hidden" name="" value="tatsu56432-buyer@gmail.com" disabled>
-                <div id="paypal-end" style="display:none">
                 </form>
             </div>
         </div>
@@ -1074,6 +1073,38 @@ function validation_stock($input = NULL)
 
 }
 
+
+function insert_purchase_history($pdo,$user_name){
+
+//    $pdo->beginTransaction();
+
+    try{
+        $statement = $pdo->prepare('SET NAMES utf8;');
+        $statement = $pdo->prepare('SELECT id FROM user WHERE user_name = :user_name');
+        $statement->bindParam(':user_name',$user_name,PDO::PARAM_INT);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_COLUMN);
+        if($result !== false){
+            $user_id = $result;
+        }else{
+            return false;
+        }
+
+        $statement = $pdo->prepare('INSERT INTO purchase_history (product_name, price ,amount, user_id) SELECT item.name,item.price,cart.amount,cart.user_id FROM item INNER JOIN stock ON item.id = stock.id INNER JOIN cart ON stock.item_id = cart.item_id where cart.user_id = ?;');
+//        $statement->bindValue(':created_at',date("Y-m-d H:i:s"),PDO::PARAM_STR);
+//        $statement->bindParam(':user_id',$user_id,PDO::PARAM_INT);
+        $statement->execute(array($user_id));
+
+        $pdo->commit();
+        return true;
+
+    }catch(PDOException $e){
+        $pdo->rollback();
+        throw $e;
+    }
+
+}
+
 //paypalAPI用Client-sideRESTをPHPを使って発行する
 function paypal_settlemen($total_amount){
 
@@ -1113,12 +1144,44 @@ function paypal_settlemen($total_amount){
         onAuthorize: function(data, actions) {
             // Make a call to the REST api to execute the payment
             return actions.payment.execute().then(function() {
-                window.alert('Payment Complete!');
+                location.href="/cart/thanks.php";
+//                window.alert('Payment Complete!');
+//            _success = "success!!";           
+//            makeRequest('thanks.php',_success);                                   
             });
         }
 
     }, '#paypal-button-container');
-
+    
+  
+//    var httpRequest;  
+//    
+//    function makeRequest(url, success) {
+//    httpRequest = new XMLHttpRequest();
+//    
+//    if (!httpRequest) {
+//      alert('中断 :( XMLHTTP インスタンスを生成できませんでした');
+//      return false;
+//    }
+//    
+//    httpRequest.onreadystatechange = alertContents;
+//    httpRequest.open('POST', url);
+//    httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+//    httpRequest.send('result=' + encodeURIComponent(success));
+//  }
+//  
+//  function alertContents() {
+//  if (httpRequest.readyState === XMLHttpRequest.DONE) {
+//    if (httpRequest.status === 200) {
+//      var response = JSON.parse(httpRequest.responseText);
+//      alert(response.computedString);
+//    } else {
+//      alert('There was a problem with the request.');
+//    }
+//  }
+//}
+  
+    
 </script>
 
 SCRIPT;

@@ -32,6 +32,7 @@
      primary key(id)
      )engine=InnoDB default charset=UTF8 AUTO_INCREMENT=1;
 
+
      CREATE TABLE user
      (
      id INT(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -39,5 +40,16 @@
      password varchar(500) NOT NULL,
      created_at datetime NOT NULL,
      updated_at datetime NOT NULL,
+     primary key(id)
+     )engine=InnoDB default charset=UTF8 AUTO_INCREMENT=1;
+
+
+     CREATE TABLE purchase_history
+     (
+     id INT(11) unsigned NOT NULL AUTO_INCREMENT,
+     product_name varchar(50) NOT NULL,
+     price int(11) NOT NULL,
+     amount int(11) NOT NULL,
+     user_id int(11) NOT NULL,
      primary key(id)
      )engine=InnoDB default charset=UTF8 AUTO_INCREMENT=1;
