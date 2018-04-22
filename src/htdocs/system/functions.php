@@ -113,7 +113,6 @@ function check_login_user($pdo, $data)
 
 }
 
-
 function validate_ID_PASS($input = null)
 {
 
@@ -175,7 +174,6 @@ function upload_img($uploaded_img_object = array())
         return false;
     }
 }
-
 
 //個別商品用tableと在庫管理用のtableへのデータ挿入処理　admin用の管理画面で使用する
 function insert_product_data($pdo, $product_data, $stock)
@@ -378,7 +376,6 @@ function update_product_info($pdo, $update_data)
 
 }
 
-
 //管理画面の商品一覧ページで使う商品一覧の情報を取得する
 function get_product_info($pdo)
 {
@@ -410,7 +407,6 @@ function get_product_info($pdo)
     }
 
 }
-
 
 //cartテーブルから各ユーザーがカートに入れた商品ID(item_id)を取得する。
 function get_itemId_from_cart($pdo, $post_name)
@@ -494,7 +490,6 @@ function get_productIds($productId_vars)
 
 }
 
-
 // get_productID_from_stockで取得した各ユーザーがカートに入れている商品IDを使って、カート表示する商品情報を取得する。
 function get_cart_item_info($pdo, $post_name = NULL, $post_product_id = NULL)
 {
@@ -543,7 +538,6 @@ function get_cart_item_info($pdo, $post_name = NULL, $post_product_id = NULL)
         throw $e;
     }
 }
-
 
 //取得した商品一覧の多次元配列から目当てのcolumnの値を取得
 function get_target_column($data, $target)
@@ -624,7 +618,7 @@ HTML;
 
 }
 
-
+//cartページで現在のカート内の情報諸々を表示
 function display_cart_result($purchase_points, $cart_sum_amount_result, $cart_total_fee)
 {
     $html = <<<HTML
@@ -643,6 +637,84 @@ function display_cart_result($purchase_points, $cart_sum_amount_result, $cart_to
         </div>
 HTML;
     echo $html;
+}
+
+//購入履歴テーブルからuser_idに合致してかつ、最新のdate_timeのものを取得
+function get_purchased_item($pdo,$user_name){
+    //$pdo -> beginTransaction();
+
+    $data = array();
+    try{
+        $statement = $pdo->query("SET NAMES utf8");
+        $statement = $pdo->prepare('SELECT id FROM user WHERE user_name = :user_name');
+        $statement->bindParam(':user_name', $user_name, PDO::PARAM_STR);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_COLUMN);
+
+        if ($result !== false) {
+            $user_id = $result;
+        } else {
+            return false;
+        }
+
+        $statement = $pdo->prepare('select purchase_history.*,item.img from purchase_history inner join item on item.name = purchase_history.product_name where purchase_history.created_at = (select max(created_at) from purchase_history where user_id = :user_id)');
+        $statement->bindValue(':user_id',$user_id,PDO::PARAM_INT);
+        $statement->execute();
+
+        while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+            $data[] = array(
+                'product_name' => $row["product_name"],
+                'price' => $row["price"],
+                'amount' => $row["amount"],
+                'created_at' => $row["created_at"],
+                'img' => $row["img"],
+            );
+        }
+
+        return $data;
+
+        $pdo->commit();
+
+    }catch(PDOException $e){
+        $pdo->rollback();
+        throw $e;
+    }
+
+
+}
+
+function display_purchased_item($purchased_list_info)
+{
+    $i = 0;
+    foreach ($purchased_list_info as $value){
+        echo <<<HTML
+                  <li class="purchasedItem">
+                <div class="purchasedItem__inner">
+                    <p class="product--thumbnail">
+                        <img src="{$value['img']}" alt="">
+                    </p>
+                    <dl class="product--name">
+                        <dt>商品名</dt>
+                        <dd>
+                            <p>{$value['product_name']}</p>
+                        </dd>
+                    </dl>
+                    <dl class="product--price">
+                        <dt>値段</dt>
+                        <dd>
+                            <p>¥{$value['price']}円</p>
+                        </dd>
+                    </dl>
+                    <dl class="product--amount">
+                        <dt>購入数</dt>
+                        <dd>{$value['amount']}</dd>
+                    </dl>
+                </div>
+            </li>
+HTML;
+
+        $i++;
+    }
 }
 
 //カート画面で購入数を変更するボタンを押したらcart_tableをupdateする。
@@ -885,7 +957,6 @@ function get_cart_total_fee($pdo, $user_name)
     }
 }
 
-
 //adminページ商品一覧出力用関数
 function display_productItem_admin($data, $id_vars = NULL, $name_vars = NULL, $price_vars = NULL, $drink_img_path_vars = NULL, $status_vars = NULL)
 {
@@ -1072,7 +1143,7 @@ function validation_stock($input = NULL)
 
 }
 
-
+//購入完了ページに遷移したらpurchase_historyテーブルにデータをinertする。
 function insert_purchase_history($pdo, $user_name)
 {
 
@@ -1105,6 +1176,7 @@ function insert_purchase_history($pdo, $user_name)
 
 }
 
+//購入完了ページに遷移したらcartテーブルからuser_idに合致したレコードを削除
 function delete_user_cart_item($pdo, $user_name)
 {
     $pdo->beginTransaction();

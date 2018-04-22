@@ -3,7 +3,7 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . "/system/init.php";
 
 $login_flag = check_login();
-    
+
 if ($login_flag === false) {
     header('location:' . LOGIN_PAGE);
 }
@@ -19,6 +19,12 @@ $cart_list_info = array();
 foreach ($product_ids as $product_id) {
     array_push($cart_list_info, get_cart_item_info($pdo, $login_name, $product_id));
 }
+
+$purchased_items = get_purchased_item($pdo,$login_name);
+
+$data['purchased_items'] = $purchased_items;
+
+
 $data['cart_list_info'] = $cart_list_info;
 
 $result = insert_purchase_history($pdo,$login_name);
@@ -26,7 +32,8 @@ $result = insert_purchase_history($pdo,$login_name);
 if($result === true){
     $purchase_complete = delete_user_cart_item($pdo,$login_name);
     if($purchase_complete === true){
-        $data['thanks_message'] = 'ご購入ありがとうございました。';
+        get_purchased_item($pdo,$login_name);
+        //$data['thanks_message'] = 'ご購入ありがとうございました。';
     }
 }
 

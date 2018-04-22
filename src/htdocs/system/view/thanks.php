@@ -8,16 +8,25 @@
     <link rel="stylesheet" href="/assets/css/style.css">
     <title>thanks page</title>
 </head>
-<body class="cart ">
-
+<body class="thanks">
 
 <div class="container">
     <div class="container__inner">
-        <h1>購入した商品一覧</h1>
-        <ul class="cartItems">
-            <?php display_cart_item($cart_list_info); ?>
-        </ul>
+        <h1>ご購入ありがとうございました</h1>
 
+        <p class="ttl">購入した商品一覧</p>
+        <ul class="purchasedItems">
+            <?php display_purchased_item($purchased_items);?>
+        </ul>
+        <div class="purchasedResultBox">
+            <div class="purchasedResultBox__inner">
+                <p class="purchase_points">購入点数:0商品</p>
+                <p class="total_purchase_points">購入商品合計数:0点</p>
+                <p class="total_fee">
+                    合計金額:0円
+                </p>
+            </div>
+        </div>
     </div>
 </div>
 
