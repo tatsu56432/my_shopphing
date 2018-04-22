@@ -3,7 +3,11 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . "/system/init.php";
 
 //csrf_check
-//$ticket = (isset($_POST['ticket'])) ? $_POST['ticket'] : 'no ticket';
+$ticket = (isset($_POST['ticket'])) ? $_POST['ticket'] : 'no ticket';
+$array = ['ticket' => $ticket];
+$ticket =  json_encode($array);
+//echo $ticket;
+var_dump($ticket);
 //$check_csrf_result = check_csrf();
 //if($check_csrf_result === false){
 //    header('location:' . TOP_PAGE);
@@ -47,7 +51,7 @@ if($result === true){
 
         //session_ticketを初期化
         unset($_SESSION['ticket']);
-        var_dump($_SESSION['ticket']);
+        //var_dump($_SESSION['ticket']);
     }
 }
 

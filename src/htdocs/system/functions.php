@@ -1253,8 +1253,9 @@ function paypal_settlemen($total_amount,$ticket)
   function alertContents() {
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
     if (httpRequest.status === 200) {
-      var response = JSON.parse(httpRequest.responseText);
-      alert(response.computedString);
+//        location.href = '{$post_url}';
+//      var response = JSON.parse(httpRequest.responseText);
+//      alert(response.ticket);
     } else {
       alert('There was a problem with the request.');
     }
@@ -1286,7 +1287,7 @@ function paypal_settlemen($total_amount,$ticket)
         onAuthorize: function(data, actions) {
             // Make a call to the REST api to execute the payment
             return actions.payment.execute().then(function() {
-                makeRequest('/cart/certification.php',ticket);                                   
+                makeRequest('/cart/thanks.php',ticket);                                   
             });
         }
 
