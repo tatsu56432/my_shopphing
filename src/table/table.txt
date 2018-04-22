@@ -51,5 +51,6 @@
      price int(11) NOT NULL,
      amount int(11) NOT NULL,
      user_id int(11) NOT NULL,
+     created_at datetime default NULL,
      primary key(id)
      )engine=InnoDB default charset=UTF8 AUTO_INCREMENT=1;

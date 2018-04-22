@@ -320,7 +320,6 @@ function insert_or_update_cart($pdo, $data)
             return true;
 
 
-
         } else {
             return "データの受け渡しに失敗しました。";
         }
@@ -626,9 +625,8 @@ HTML;
 }
 
 
-
-
-function display_cart_result($purchase_points,$cart_sum_amount_result,$cart_total_fee){
+function display_cart_result($purchase_points, $cart_sum_amount_result, $cart_total_fee)
+{
     $html = <<<HTML
 <div class="purchaseBlock">
             <div class="purchaseBlock__inner">
@@ -709,7 +707,7 @@ function delete_cart_item($pdo, $delete_item_id)
     try {
         $statement = $pdo->query("SET NAMES utf8;");
         $statement = $pdo->prepare('DELETE from cart WHERE id = :delete_row_id');
-        $statement->bindParam(':delete_row_id',$delete_row_id,PDO::PARAM_INT);
+        $statement->bindParam(':delete_row_id', $delete_row_id, PDO::PARAM_INT);
         $statement->execute();
         $pdo->commit();
         return true;
@@ -720,7 +718,8 @@ function delete_cart_item($pdo, $delete_item_id)
 }
 
 //deleteボタンから送信されるvalueの値が各ユーザーごとに正当なものか検証する、cart_tableからuser_idを使ってidがその中にあるか検証。
-function validate_delete_cart_value($pdo,$login_name,$delete_value){
+function validate_delete_cart_value($pdo, $login_name, $delete_value)
+{
 
     $post_delete_value = intval($delete_value);
 
@@ -728,22 +727,22 @@ function validate_delete_cart_value($pdo,$login_name,$delete_value){
 //    $pdo->beginTransaction();
 
     $data = array();
-    try{
+    try {
         $statement = $pdo->query("SET NAMES utf8");
         $statement = $pdo->prepare('SELECT id FROM user WHERE user_name = :login_name');
-        $statement->bindParam(':login_name',$login_name,PDO::PARAM_STR);
+        $statement->bindParam(':login_name', $login_name, PDO::PARAM_STR);
         $statement->execute();
         $result = $statement->fetch(PDO::FETCH_COLUMN);
-        if($result !== false){
+        if ($result !== false) {
             $user_id = $result;
-        }else{
+        } else {
             return false;
         }
 
         $statement = $pdo->prepare('SELECT id FROM cart WHERE user_id = :user_id');
-        $statement->bindParam(':user_id',$user_id,PDO::PARAM_INT);
+        $statement->bindParam(':user_id', $user_id, PDO::PARAM_INT);
         $statement->execute();
-        while($row = $statement->fetch(PDO::FETCH_ASSOC)){
+        while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
             $data[] = array(
                 'id' => $row["id"],
             );
@@ -752,30 +751,29 @@ function validate_delete_cart_value($pdo,$login_name,$delete_value){
 //        $pdo->commit();
 
         $cart_ids = array();
-        if($data !== false ){
+        if ($data !== false) {
 
-            foreach ($data as $num){
-                foreach ($num as $cart_id){
-                    array_push($cart_ids,$cart_id);
+            foreach ($data as $num) {
+                foreach ($num as $cart_id) {
+                    array_push($cart_ids, $cart_id);
                 }
             }
 
-            $delete_flag = in_array($post_delete_value,$cart_ids);
-            if($delete_flag === true){
+            $delete_flag = in_array($post_delete_value, $cart_ids);
+            if ($delete_flag === true) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
 
-        }else{
+        } else {
 
             $error['delete_cart'] = '入力された値が不正です';
             return $error;
         }
 
 
-
-    }catch (PDOException $e){
+    } catch (PDOException $e) {
 //        $pdo ->rollback();
         throw $e;
     }
@@ -784,30 +782,31 @@ function validate_delete_cart_value($pdo,$login_name,$delete_value){
 }
 
 //各ユーザーごとのカートに入っている購入点数のカウント数を取得する
-function get_cart_record($pdo,$user_name){
+function get_cart_record($pdo, $user_name)
+{
 
 //    $pdo->beginTransaction();
     $user_id = '';
-    try{
+    try {
         $statement = $pdo->prepare('SET NAMES utf8;');
         $statement = $pdo->prepare('SELECT id from user WHERE user_name = :user_name');
-        $statement->bindParam(':user_name',$user_name,PDO::PARAM_INT);
+        $statement->bindParam(':user_name', $user_name, PDO::PARAM_INT);
         $statement->execute();
         $result = $statement->fetch(PDO::FETCH_COLUMN);
-        if($result !== false){
+        if ($result !== false) {
             $user_id = $result;
-        }else{
+        } else {
             return false;
         }
 
         $statement = $pdo->prepare('SELECT count(item_id) FROM cart WHERE user_id = :user_id');
-        $statement->bindParam(':user_id',$user_id,PDO::PARAM_INT);
+        $statement->bindParam(':user_id', $user_id, PDO::PARAM_INT);
         $statement->execute();
         $result = $statement->fetch(PDO::FETCH_COLUMN);
         return $result;
 
         $pdo->commit();
-    }catch (PDOException $e){
+    } catch (PDOException $e) {
         $pdo->rollback();
         throw $e;
     }
@@ -815,62 +814,64 @@ function get_cart_record($pdo,$user_name){
 }
 
 //各ユーザーごとのカートに入っている商品購入数の合計値を取得する
-function get_cart_sum_amount($pdo,$user_name){
+function get_cart_sum_amount($pdo, $user_name)
+{
 
     //$pdo->beginTransaction();
 
-    try{
+    try {
         $statement = $pdo->prepare('SET NAMES utf8;');
         $statement = $pdo->prepare('SELECT id from user WHERE user_name = :user_name');
-        $statement->bindParam(':user_name',$user_name,PDO::PARAM_INT);
+        $statement->bindParam(':user_name', $user_name, PDO::PARAM_INT);
         $statement->execute();
         $result = $statement->fetch(PDO::FETCH_COLUMN);
 
-        if($result !== false){
-         $user_id = $result;
-        }else{
+        if ($result !== false) {
+            $user_id = $result;
+        } else {
             return false;
         }
 
         $statement = $pdo->prepare('SELECT sum(amount) FROM cart WHERE user_id = :user_id');
-        $statement->bindParam(':user_id',$user_id,PDO::PARAM_INT);
+        $statement->bindParam(':user_id', $user_id, PDO::PARAM_INT);
         $statement->execute();
         $result = $statement->fetch(PDO::FETCH_COLUMN);
-        if($result !== NULL){
+        if ($result !== NULL) {
             return $result;
-        }else{
+        } else {
             return 0;
         }
         $pdo->commit();
-    }catch (PDOException $e){
+    } catch (PDOException $e) {
         $pdo->rollback();
         throw $e;
     }
 }
 
 //各ユーザーのカートの中の商品の合計金額を取得
-function get_cart_total_fee($pdo,$user_name){
-    try{
+function get_cart_total_fee($pdo, $user_name)
+{
+    try {
         $statement = $pdo->prepare('SET NAMES utf8;');
         $statement = $pdo->prepare('SELECT id from user WHERE user_name = :user_name');
-        $statement->bindParam(':user_name',$user_name,PDO::PARAM_INT);
+        $statement->bindParam(':user_name', $user_name, PDO::PARAM_INT);
         $statement->execute();
         $result = $statement->fetch(PDO::FETCH_COLUMN);
 
-        if($result !== false){
+        if ($result !== false) {
             $user_id = $result;
-        }else{
+        } else {
             return false;
         }
 
         //3つのテーブルを内部結合して、各商品の購入数＊値段を取得
         $statement = $pdo->prepare('SELECT item.price * cart.amount FROM item INNER JOIN stock ON item.id = stock.id INNER JOIN cart ON stock.item_id = cart.item_id where cart.user_id = :user_id');
-        $statement->bindParam(':user_id',$user_id,PDO::PARAM_INT);
+        $statement->bindParam(':user_id', $user_id, PDO::PARAM_INT);
         $statement->execute();
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
         $tolal_fee = 0;
-        foreach ($result as $item){
-            foreach ($item as $key =>$val){
+        foreach ($result as $item) {
+            foreach ($item as $key => $val) {
                 $tolal_fee += $val;
             }
         }
@@ -878,13 +879,11 @@ function get_cart_total_fee($pdo,$user_name){
         return $tolal_fee;
 
         $pdo->commit();
-    }catch (PDOException $e){
+    } catch (PDOException $e) {
         $pdo->rollback();
         throw $e;
     }
 }
-
-
 
 
 //adminページ商品一覧出力用関数
@@ -1074,23 +1073,24 @@ function validation_stock($input = NULL)
 }
 
 
-function insert_purchase_history($pdo,$user_name){
+function insert_purchase_history($pdo, $user_name)
+{
 
 //    $pdo->beginTransaction();
 
-    try{
+    try {
         $statement = $pdo->prepare('SET NAMES utf8;');
-        $statement = $pdo->prepare('SELECT id FROM user WHERE user_name = :user_name');
-        $statement->bindParam(':user_name',$user_name,PDO::PARAM_INT);
+        $statement = $pdo->prepare('SELECT id FROM user WHERE user_name = :user_name;');
+        $statement->bindParam(':user_name', $user_name, PDO::PARAM_STR);
         $statement->execute();
         $result = $statement->fetch(PDO::FETCH_COLUMN);
-        if($result !== false){
+        if ($result !== false) {
             $user_id = $result;
-        }else{
+        } else {
             return false;
         }
 
-        $statement = $pdo->prepare('INSERT INTO purchase_history (product_name, price ,amount, user_id) SELECT item.name,item.price,cart.amount,cart.user_id FROM item INNER JOIN stock ON item.id = stock.id INNER JOIN cart ON stock.item_id = cart.item_id where cart.user_id = ?;');
+        $statement = $pdo->prepare('INSERT INTO purchase_history (product_name, price ,amount, user_id , created_at) SELECT item.name,item.price,cart.amount,cart.user_id,cast(now() as datetime)  FROM item INNER JOIN stock ON item.id = stock.id INNER JOIN cart ON stock.item_id = cart.item_id where cart.user_id = ?;');
 //        $statement->bindValue(':created_at',date("Y-m-d H:i:s"),PDO::PARAM_STR);
 //        $statement->bindParam(':user_id',$user_id,PDO::PARAM_INT);
         $statement->execute(array($user_id));
@@ -1098,15 +1098,43 @@ function insert_purchase_history($pdo,$user_name){
         $pdo->commit();
         return true;
 
-    }catch(PDOException $e){
+    } catch (PDOException $e) {
         $pdo->rollback();
         throw $e;
     }
 
 }
 
+function delete_user_cart_item($pdo, $user_name)
+{
+    $pdo->beginTransaction();
+
+    try {
+        $statement = $pdo->prepare('SET NAMES utf8;');
+        $statement = $pdo->prepare('SELECT id FROM user WHERE user_name = :user_name;');
+        $statement->bindParam(':user_name', $user_name, PDO::PARAM_STR);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_COLUMN);
+        if ($result !== false) {
+            $user_id = $result;
+        } else {
+            return false;
+        }
+
+        $statement = $pdo->prepare('delete from cart WHERE user_id = ?');
+        $statement->execute(array($user_id));
+        $pdo ->commit();
+        return true;
+    } catch (PDOException $e) {
+        $pdo -> rollback();
+        throw $e;
+    }
+
+}
+
 //paypalAPI用Client-sideRESTをPHPを使って発行する
-function paypal_settlemen($total_amount){
+function paypal_settlemen($total_amount)
+{
 
     //defineからpaypalAPI用のCLIENT_IDと通過種類を取得
     $client_id = CLIENT_ID;
@@ -1144,6 +1172,10 @@ function paypal_settlemen($total_amount){
         onAuthorize: function(data, actions) {
             // Make a call to the REST api to execute the payment
             return actions.payment.execute().then(function() {
+                
+                
+                
+                
                 location.href="/cart/thanks.php";
 //                window.alert('Payment Complete!');
 //            _success = "success!!";           
@@ -1154,32 +1186,32 @@ function paypal_settlemen($total_amount){
     }, '#paypal-button-container');
     
   
-//    var httpRequest;  
-//    
-//    function makeRequest(url, success) {
-//    httpRequest = new XMLHttpRequest();
-//    
-//    if (!httpRequest) {
-//      alert('中断 :( XMLHTTP インスタンスを生成できませんでした');
-//      return false;
-//    }
-//    
-//    httpRequest.onreadystatechange = alertContents;
-//    httpRequest.open('POST', url);
-//    httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-//    httpRequest.send('result=' + encodeURIComponent(success));
-//  }
-//  
-//  function alertContents() {
-//  if (httpRequest.readyState === XMLHttpRequest.DONE) {
-//    if (httpRequest.status === 200) {
-//      var response = JSON.parse(httpRequest.responseText);
-//      alert(response.computedString);
-//    } else {
-//      alert('There was a problem with the request.');
-//    }
-//  }
-//}
+    var httpRequest;  
+    
+    function makeRequest(url, success) {
+    httpRequest = new XMLHttpRequest();
+    
+    if (!httpRequest) {
+      alert('中断 :( XMLHTTP インスタンスを生成できませんでした');
+      return false;
+    }
+    
+    httpRequest.onreadystatechange = alertContents;
+    httpRequest.open('POST', url);
+    httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    httpRequest.send('result=' + encodeURIComponent(success));
+  }
+  
+  function alertContents() {
+  if (httpRequest.readyState === XMLHttpRequest.DONE) {
+    if (httpRequest.status === 200) {
+      var response = JSON.parse(httpRequest.responseText);
+      alert(response.computedString);
+    } else {
+      alert('There was a problem with the request.');
+    }
+  }
+}
   
     
 </script>

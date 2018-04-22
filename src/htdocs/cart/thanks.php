@@ -3,7 +3,7 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . "/system/init.php";
 
 $login_flag = check_login();
-
+    
 if ($login_flag === false) {
     header('location:' . LOGIN_PAGE);
 }
@@ -24,7 +24,10 @@ $data['cart_list_info'] = $cart_list_info;
 $result = insert_purchase_history($pdo,$login_name);
 
 if($result === true){
-    echo "success insert";
+    $purchase_complete = delete_user_cart_item($pdo,$login_name);
+    if($purchase_complete === true){
+        $data['thanks_message'] = 'ご購入ありがとうございました。';
+    }
 }
 
 
