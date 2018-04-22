@@ -2,11 +2,22 @@
 
 require_once $_SERVER['DOCUMENT_ROOT'] . "/system/init.php";
 
-$login_flag = check_login();
+//csrf_check
+//$ticket = (isset($_POST['ticket'])) ? $_POST['ticket'] : 'no ticket';
+//$check_csrf_result = check_csrf();
+//if($check_csrf_result === false){
+//    header('location:' . TOP_PAGE);
+//}
 
+//login_check
+$login_flag = check_login();
 if ($login_flag === false) {
     header('location:' . LOGIN_PAGE);
 }
+
+
+
+
 
 $login_name = isset($_SESSION['login_name']) ? $_SESSION['login_name'] : NULL;
 
@@ -33,7 +44,10 @@ if($result === true){
     $purchase_complete = delete_user_cart_item($pdo,$login_name);
     if($purchase_complete === true){
         get_purchased_item($pdo,$login_name);
-        //$data['thanks_message'] = 'ご購入ありがとうございました。';
+
+        //session_ticketを初期化
+        unset($_SESSION['ticket']);
+        var_dump($_SESSION['ticket']);
     }
 }
 

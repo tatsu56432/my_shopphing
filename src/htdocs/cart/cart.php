@@ -1,5 +1,6 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . "/system/init.php";
+session_regenerate_id(TRUE);
 
 $login_flag = check_login();
 
@@ -63,6 +64,13 @@ if ($submit_delete) {
     }
 
 }
+
+if(!isset($_SESSION['ticket'])){
+    //$_SESSION['ticket']がセットされていなければ、トークンを生成して代入
+    $_SESSION['ticket'] = sha1(uniqid(mt_rand(), TRUE));
+}
+
+$data['ticket'] = $_SESSION['ticket'];
 
 
 $view = view('/cart.php', $data);

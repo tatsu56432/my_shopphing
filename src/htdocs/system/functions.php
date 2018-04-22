@@ -2,6 +2,22 @@
 
 require_once 'define.php';
 
+function check_csrf()
+{
+    //csrf対策
+    if(isset($_POST['ticket'], $_SESSION['ticket'])){
+        $ticket = $_POST['ticket'];
+        if($ticket !== $_SESSION['ticket']){
+            header('Location:'.TOP_PAGE);
+            exit;
+        }
+    }else{
+        header('Location:'.TOP_PAGE);
+        exit;
+    }
+
+    return true;
+}
 
 function check_login()
 {
@@ -1205,29 +1221,56 @@ function delete_user_cart_item($pdo, $user_name)
 }
 
 //paypalAPI用Client-sideRESTをPHPを使って発行する
-function paypal_settlemen($total_amount)
+function paypal_settlemen($total_amount,$ticket)
 {
 
-    //defineからpaypalAPI用のCLIENT_IDと通過種類を取得
+    //defineからpaypalAPI用のCLIENT_IDと通過種類とpost_urlを取得
     $client_id = CLIENT_ID;
     $currency = CURRENCY;
+    $post_url = THANKS_PAGE;
 
     echo <<<SCRIPT
-    <script>
-    paypal.Button.render({
-
+<script>
+(function() {
+      
+  var httpRequest;
+  
+  var ticket = '{$ticket}';
+  
+  function makeRequest(url, ticket) {
+    httpRequest = new XMLHttpRequest();
+    
+    if (!httpRequest) {
+      alert('error : XMLHTTP インスタンスを生成できませんでした');
+      return false;
+    }
+    
+    httpRequest.onreadystatechange = alertContents;
+    httpRequest.open('POST', url);
+    httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    httpRequest.send('ticket=' + encodeURIComponent(ticket));
+  }
+  function alertContents() {
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+    if (httpRequest.status === 200) {
+      var response = JSON.parse(httpRequest.responseText);
+      alert(response.computedString);
+    } else {
+      alert('There was a problem with the request.');
+    }
+  }
+  }
+  
+  paypal.Button.render({
         env: 'sandbox',
         client: {
             sandbox:    '{$client_id}'
 //            production: '<insert production client id>'
         },
-
         // Show the buyer a 'Pay Now' button in the checkout flow
         commit: true,
-
         // payment() is called when the button is clicked
         payment: function(data, actions) {
-
             // Make a call to the REST api to create the payment
             return actions.payment.create({
                 payment: {
@@ -1239,53 +1282,17 @@ function paypal_settlemen($total_amount)
                 }
             });
         },
-
         // onAuthorize() is called when the buyer approves the payment
         onAuthorize: function(data, actions) {
             // Make a call to the REST api to execute the payment
             return actions.payment.execute().then(function() {
-                
-                
-                
-                
-                location.href="/cart/thanks.php";
-//                window.alert('Payment Complete!');
-//            _success = "success!!";           
-//            makeRequest('thanks.php',_success);                                   
+                makeRequest('/cart/certification.php',ticket);                                   
             });
         }
 
     }, '#paypal-button-container');
-    
   
-    var httpRequest;  
-    
-    function makeRequest(url, success) {
-    httpRequest = new XMLHttpRequest();
-    
-    if (!httpRequest) {
-      alert('中断 :( XMLHTTP インスタンスを生成できませんでした');
-      return false;
-    }
-    
-    httpRequest.onreadystatechange = alertContents;
-    httpRequest.open('POST', url);
-    httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    httpRequest.send('result=' + encodeURIComponent(success));
-  }
-  
-  function alertContents() {
-  if (httpRequest.readyState === XMLHttpRequest.DONE) {
-    if (httpRequest.status === 200) {
-      var response = JSON.parse(httpRequest.responseText);
-      alert(response.computedString);
-    } else {
-      alert('There was a problem with the request.');
-    }
-  }
-}
-  
-    
+})();
 </script>
 
 SCRIPT;

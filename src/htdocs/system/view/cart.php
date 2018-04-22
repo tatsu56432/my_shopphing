@@ -29,7 +29,9 @@
     </div>
 </div>
 
-<?php paypal_settlemen($cart_total_fee); ?>
+
+
+<?php paypal_settlemen($cart_total_fee,$ticket); ?>
 
 </body>
 </html>
