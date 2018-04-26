@@ -42,15 +42,17 @@ $data['purchased_items'] = $purchased_items;
 
 $data['cart_list_info'] = $cart_list_info;
 
-$result = insert_purchase_history($pdo,$login_name);
+$insert_purchase_history_result = insert_purchase_history($pdo,$login_name);
 
-if($result === true){
+if($insert_purchase_history_result === true){
     $purchase_complete = delete_user_cart_item($pdo,$login_name);
     if($purchase_complete === true){
-        get_purchased_item($pdo,$login_name);
-
-        //session_ticketを初期化
-        unset($_SESSION['ticket']);
+        $get_purchased_item_result = get_purchased_item($pdo,$login_name);
+        if(!$get_purchased_item_result){
+            //session_ticketを初期化
+            unset($_SESSION['ticket']);
+            header("location" . THANKS_PAGE);
+        }
         //var_dump($_SESSION['ticket']);
     }
 }

@@ -647,7 +647,7 @@ function display_cart_result($purchase_points, $cart_sum_amount_result, $cart_to
                 合計金額:{$cart_total_fee}円
                 </p>
                 <button type="submit" class="purchase_btn" name="purchase" id="paypal-button-container"></button>
-                <input type="hidden" name="" value="tatsu56432-buyer@gmail.com" disabled>
+                <input type="hidden" name="" value="tatsu56432-buyer-1@gmail.com" disabled>
                 </form>
             </div>
         </div>
@@ -1234,7 +1234,6 @@ function paypal_settlemen($total_amount,$ticket)
 (function() {
       
   var httpRequest;
-  
   var ticket = '{$ticket}';
   
   function makeRequest(url, ticket) {
@@ -1254,8 +1253,8 @@ function paypal_settlemen($total_amount,$ticket)
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
     if (httpRequest.status === 200) {
 //        location.href = '{$post_url}';
-//      var response = JSON.parse(httpRequest.responseText);
-//      alert(response.ticket);
+      var response = JSON.parse(httpRequest.responseText);
+      alert(response.ticket);
     } else {
       alert('There was a problem with the request.');
     }
@@ -1287,7 +1286,7 @@ function paypal_settlemen($total_amount,$ticket)
         onAuthorize: function(data, actions) {
             // Make a call to the REST api to execute the payment
             return actions.payment.execute().then(function() {
-                makeRequest('/cart/thanks.php',ticket);                                   
+//                makeRequest('/cart/thanks.php',ticket);                                   
             });
         }
 
