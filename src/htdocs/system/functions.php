@@ -635,19 +635,21 @@ HTML;
 }
 
 //cartページで現在のカート内の情報諸々を表示
-function display_cart_result($purchase_points, $cart_sum_amount_result, $cart_total_fee)
+function display_cart_result($purchase_points, $cart_sum_amount_result, $cart_total_fee,$ticket)
 {
+
+    $thanks_page = THANKS_PAGE;
     $html = <<<HTML
 <div class="purchaseBlock">
             <div class="purchaseBlock__inner">
-                <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+                <form action="{$thanks_page}" method="post">
                 <p class="purchase_points">購入点数:{$purchase_points}商品</p>
                 <p class="total_purchase_points">購入商品合計数:{$cart_sum_amount_result}点</p>
                 <p class="total_fee">
                 合計金額:{$cart_total_fee}円
                 </p>
                 <button type="submit" class="purchase_btn" name="purchase" id="paypal-button-container"></button>
-                <input type="hidden" name="" value="tatsu56432-buyer-1@gmail.com" disabled>
+                <input type="hidden" name="csrf" value="{$ticket}" disabled>
                 </form>
             </div>
         </div>
@@ -1252,7 +1254,7 @@ function paypal_settlemen($total_amount,$ticket)
   function alertContents() {
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
     if (httpRequest.status === 200) {
-//        location.href = '{$post_url}';
+      location.href = '{$post_url}';
       var response = JSON.parse(httpRequest.responseText);
       alert(response.ticket);
     } else {
@@ -1286,7 +1288,7 @@ function paypal_settlemen($total_amount,$ticket)
         onAuthorize: function(data, actions) {
             // Make a call to the REST api to execute the payment
             return actions.payment.execute().then(function() {
-//                makeRequest('/cart/thanks.php',ticket);                                   
+                makeRequest('/cart/thanks.php',ticket);                                   
             });
         }
 

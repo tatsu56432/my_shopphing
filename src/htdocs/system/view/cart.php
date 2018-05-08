@@ -24,11 +24,10 @@
             <?php display_cart_item($cart_list_info); ?>
         </ul>
 
-        <?php  display_cart_result($purchase_points,$cart_sum_amount_result,$cart_total_fee);?>
+        <?php  display_cart_result($purchase_points,$cart_sum_amount_result,$cart_total_fee,$ticket);?>
 
     </div>
 </div>
-
 
 
 <?php paypal_settlemen($cart_total_fee,$ticket); ?>

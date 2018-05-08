@@ -18,15 +18,18 @@
         <ul class="purchasedItems">
             <?php display_purchased_item($purchased_items);?>
         </ul>
-        <div class="purchasedResultBox">
-            <div class="purchasedResultBox__inner">
-                <p class="purchase_points">購入点数:0商品</p>
-                <p class="total_purchase_points">購入商品合計数:0点</p>
-                <p class="total_fee">
-                    合計金額:0円
-                </p>
-            </div>
-        </div>
+
+        <p class="btn_to_top"><a href="/">トップへ戻る</a></p>
+
+<!--        <div class="purchasedResultBox">-->
+<!--            <div class="purchasedResultBox__inner">-->
+<!--                <p class="purchase_points">購入点数:0商品</p>-->
+<!--                <p class="total_purchase_points">購入商品合計数:0点</p>-->
+<!--                <p class="total_fee">-->
+<!--                    合計金額:0円-->
+<!--                </p>-->
+<!--            </div>-->
+<!--        </div>-->
     </div>
 </div>
 
